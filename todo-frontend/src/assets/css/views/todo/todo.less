@@ -1,0 +1,44 @@
+.el-menu {
+  border-right: none;
+  .el-menu-item {
+    height: 40px;
+    line-height: 40px;
+  }
+}
+/* 左边区域 */
+.left {
+  border-right: 1px solid #e6e6e6;
+}
+
+.group-container,
+.tag-container {
+  overflow: hidden;
+  .head:hover {
+    cursor: pointer;
+  }
+  .icon-unfold:hover {
+    background-color: rgb(234, 236, 243);
+  }
+  .icon-plus:hover {
+    background-color: rgb(234, 236, 243);
+  }
+}
+/* 右边区域 */
+.right {
+  border-left: 1px solid #e6e6e6;
+}
+.detail-bgcolor {
+  background-color: var(--bg-color-main);
+  opacity: 0.3;
+}
+/* 局部滚动条 */
+.inner-scroll {
+  height: 100%;
+}
+.inner-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.inner-scroll::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background-color: rgba(207, 240, 245, 1);
+}

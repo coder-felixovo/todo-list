@@ -1,0 +1,39 @@
+.el-input,
+.el-button {
+  width: 100%;
+}
+.el-button {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+  background-color: rgb(var(--bg-color-btn-main));
+}
+.el-button:hover {
+  background-color: rgb(var(--bg-color-btn-hover-color));
+}
+:deep(.el-input .input-error) {
+  border-color: rgb(var(--color-error));
+}
+.register-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: rgb(var(--bg-color-main));
+}
+.head {
+  padding: 20px 0;
+  background-color: #fff;
+  h1 {
+    margin-left: 100px;
+  }
+}
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 480px;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
