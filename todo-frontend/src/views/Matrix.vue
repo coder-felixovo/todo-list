@@ -60,10 +60,9 @@
 </template>
 
 <script>
-import { getMatrixTodo } from '@/assets/js/request/matrixRequest.js'
+import { apiGetMatrixTodo } from '@/assets/js/public/api.js'
 import { toggleTodoCheckedRequest } from '@/assets/js/request/todoRequest.js'
 import TodoItem from '@/component/TodoItem'
-import { showMessage } from '@/assets/js/public/publicFunction'
 const defaultMatrixData = [
   { matrixName: '重要且紧急' },
   { matrixName: '重要不紧急' },
@@ -91,31 +90,39 @@ export default {
     },
     async checkTodo () {
       const clickDOM = event.composedPath().find(element => element.__vue__)
-      const todoItemVue = clickDOM.__vue__
-      if (!todoItemVue) {
+      if (!clickDOM) {
         console.error('无法检测到TodoItem.vue实例')
-      } else {
-        const todo = todoItemVue.todo
-        const { todoId, todoChecked } = todo
-        const targetChecked = todoChecked === 0 ? 1 : 0
-        const requestParams = {
-          todoId,
-          originalChecked: todoChecked,
-          targetChecked
-        }
-        {
-          const { todoId, originalChecked, nowChecked } = await toggleTodoCheckedRequest({ context: this, requestParams })
-          const index = this.matrixTodoList.findIndex(element => todoId === element.todoId)
-          index === -1 ? console.error('完成待办事项出错') : this.matrixTodoList.splice(index, 1)
-        }
+        return
       }
+      const todo = clickDOM.__vue__.todo
+      const { todoId, todoChecked } = todo
+      const targetChecked = todoChecked === 0 ? 1 : 0
+      const requestParams = {
+        todoId,
+        originalChecked: todoChecked,
+        targetChecked
+      }
+      {
+        const { todoId, originalChecked, nowChecked } = await toggleTodoCheckedRequest({ context: this, requestParams })
+        const index = this.matrixTodoList.findIndex(element => todoId === element.todoId)
+        index === -1 ? console.error('完成待办事项出错') : this.matrixTodoList.splice(index, 1)
+      }
+    },
+    async getMatrixTodo () {
+      this.$request.get(apiGetMatrixTodo)
+        .then(res => {
+          if (res.status === 602) {
+            const { matrixTodoData } = res.data
+            this.matrixTodoList = matrixTodoData || []
+          }
+        })
     }
   },
 
   created () {
     const matrixList = this.$store.state.matrixList
     this.matrixList = matrixList || defaultMatrixData
-    getMatrixTodo({ context: this })
+    this.getMatrixTodo()
   },
 
   computed: {

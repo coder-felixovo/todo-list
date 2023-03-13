@@ -1,15 +1,4 @@
 /* 账户 */
-// 注册
-module.exports.sqlRegister = `
-  INSERT INTO account 
-  (userid, username, password, password2, status, create_time) 
-  VALUES (?,?,?,?, ?, ?)
-`
-// 查询用户名
-module.exports.sqlQueryUsername = `
-  SELECT username FROM account WHERE username = ?
-`
-
 // 获取用户信息
 module.exports.getUserInfoSql = `
   SELECT username, nickname, contact, email, avatar 
@@ -17,10 +6,7 @@ module.exports.getUserInfoSql = `
   WHERE userid = ?
 `
 
-module.exports.sqlQueryUser =
-  'SELECT userid, token FROM account WHERE username = ? AND password = ?'
-module.exports.sqlUpToken =
-  'UPDATE account SET token = ? WHERE userid = ? AND username = ?'
+
 
 // 根据日期范围获取待办事项
 module.exports.sqlGetTodoByDateRange = `

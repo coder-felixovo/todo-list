@@ -1,5 +1,5 @@
 <template>
-  <div class="datetime-picker">
+  <div class="datetime-picker" @click.stop>
     <el-date-picker
       v-model="datetime"
       type="datetime"

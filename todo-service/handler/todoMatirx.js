@@ -2,26 +2,26 @@ const uuid = require('node-uuid/uuid')
 const db = require('../db/config.js')
 const { sqlGetMatrix, sqlGetMatrixTodo } = require('../db/sql/matrixSql')
 const { handleQueryResult, printSqlError } = require('../util/public')
+const { generateDatetime } = require('../util/time')
 
-// 为用户创建默认四象限
+/**
+ * 为用户创建默认四象限
+ * @param {String} userid 
+ */
 module.exports.initializeMatrix = function (userid) {
-  const matrixIdArr = []
-  for (let i = 0; i < 5; i++) {
-    const id = uuid().split('-').join('').slice(0, 15)
-    matrixIdArr.push(id)
-  }
   const createDefaultMatrixSql = `
-    INSERT INTO todo_matrix(user_id, matrix_id, matrix_name, matrix_priority)
+    INSERT INTO todo_matrix(user_id, matrix_id, matrix_name, matrix_priority, create_time)
     VALUES
-    ('${userid}', '${matrixIdArr[0]}', '重要且紧急', 1),
-    ('${userid}', '${matrixIdArr[1]}', '重要不紧急', 2),
-    ('${userid}', '${matrixIdArr[2]}', '不重要但紧急', 3),
-    ('${userid}', '${matrixIdArr[3]}', '不重要不紧急', 4),
-    ('${userid}', '${matrixIdArr[4]}', '无优先级', 5);
+    ('${userid}', '${uuid().split('-').join('').slice(0, 15)}', '重要且紧急', 1, '${generateDatetime()}'),
+    ('${userid}', '${uuid().split('-').join('').slice(0, 15)}', '重要不紧急', 2, '${generateDatetime()}'),
+    ('${userid}', '${uuid().split('-').join('').slice(0, 15)}', '不重要但紧急', 3, '${generateDatetime()}'),
+    ('${userid}', '${uuid().split('-').join('').slice(0, 15)}', '不重要不紧急', 4, '${generateDatetime()}');
   `
   db.query(createDefaultMatrixSql, (error, results) => {
     if (error) {
-      console.log(error)
+      console.log('initializeMatrix')
+      console.log(error.sql)
+      console.log(error.sqlMessage)
     }
   })
 }
@@ -66,15 +66,16 @@ module.exports.getMatrixTodo = function (request, response) {
       return response.send(responseResult)
     }
     const result = handleQueryResult(results)
+    responseResult.data.matrixTodoData = []
     if (result.length === 0) {
       responseResult.status = 602
       responseResult.message = '查询成功，但四象限中暂无待办事项'
-      return response.send(responseResult)
+      response.send(responseResult)
     } else {
       responseResult.status = 602
       responseResult.message = '查询成功'
       responseResult.data.matrixTodoData = results
-      return response.send(responseResult)
+      response.send(responseResult)
     }
   })
 }

@@ -63,7 +63,7 @@ export default {
   methods: {
     async addTodo () {
       if (!this.todoTitle) {
-        showMessage(this, '标题不能为空', 'warning', 600)
+        showMessage(this, '标题不能为空', 'info', 800)
         return
       }
       const requestParams = new Todo({
@@ -72,14 +72,23 @@ export default {
         groupId: this.todoGroupId,
         groupName: this.groupName
       })
-      const newTodo = await createTodoRequest({ context: this, requestParams, flag: 'AddTodo.vue' })
-      // 发送至TodoList.vue
-      this.$bus.$emit('bus-new-todo', newTodo)
+      const newTodo = await createTodoRequest({ context: this, requestParams })
+      this.todoTitle = ''
+      this.$refs.addTodoInputRef.blur()
+      this.$bus.$emit('bus-new-todo', newTodo) // 发送至TodoList.vue
     },
 
     openDatetimePicker () {
       if (!this.$store.state.isShowDatetimePicker) {
         this.$store.commit('toggleDatetimePicker')
+        window.addEventListener('click', this.closeDatetimePicker)
+      }
+    },
+
+    closeDatetimePicker () {
+      if (this.$store.state.isShowDatetimePicker) {
+        this.$store.commit('toggleDatetimePicker')
+        window.removeEventListener('click', this.closeDatetimePicker)
       }
     },
 

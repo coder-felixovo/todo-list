@@ -1,9 +1,8 @@
-/* 登录注册 */
+/* 帐户信息 */
 export const apiRegister = '/api/register'
 export const apiLogin = '/api/login'
-
-/* 用户信息 */
 export const apiGetUserInfo = '/api/get_user_info'
+export const apiUsernameIsUsable = '/api/usable_username'
 
 /* 待办事项 */
 export const apiAddTodo = '/api/add_todo'

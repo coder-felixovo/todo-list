@@ -1,3 +1,4 @@
+/* 待办事项视图页面 */
 <template>
   <div class="todo-view-page">
     <div class="flex flex-col h-full">
@@ -40,7 +41,7 @@
 </template>
 
 <script>
-import { todoViewMenuData } from '@/assets/js/views/todoView.js'
+import { todoViewMenuData } from '@/views/todo-view/index.js'
 
 export default {
   name: 'todo-view-comp',
@@ -76,5 +77,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/views/todoView.less";
+@import "@/views/todo-view/index.less";
 </style>

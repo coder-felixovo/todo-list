@@ -54,5 +54,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/views/search.less";
+@import "./search.less";
 </style>

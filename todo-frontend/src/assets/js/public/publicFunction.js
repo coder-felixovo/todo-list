@@ -15,7 +15,7 @@ export function showMessage (context, msg, type, duration) {
   _this.$message({
     message: msg,
     type: type || 'info',
-    duration: duration || 1500
+    duration: duration || 1000
   })
 }
 
@@ -37,13 +37,11 @@ export function debounce (func, delay = 1000) {
   }
 }
 
-/* Router */
 // 获取当前路由的path
 export function getRoutePath (context) {
   return context.$route.path
 }
 
-/* Vuex */
 // 获取state
 export function getStateInVuex ({ context, propName }) {
   return context.$store.state[propName]

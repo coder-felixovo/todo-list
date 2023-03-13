@@ -40,7 +40,7 @@
             <label
               for="keepLogin"
               class="pl-5px color-main"
-            >自动登录</label>
+            >保持登录</label>
           </li>
           <li
             class="fr"
@@ -148,5 +148,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/views/login.less";
+@import "./login.less";
 </style>

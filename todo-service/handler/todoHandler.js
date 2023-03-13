@@ -4,7 +4,7 @@ const db = require('../db/config')
 const { printSqlError } = require('../util/public.js')
 const { handleQueryResult } = require('../util/public')
 const { generateDatetime, formatDateObject } = require('../util/time')
-const { Todo } = require('../util/class')
+const { Todo } = require('../model/todo')
 
 const {
   sqlAddTodo, sqlCreateTodo, sqlMoveTodoInBin, sqlDeleteTodo, sqlToggleTodoCompletionStatus, sqlRegainTodo,
@@ -300,7 +300,7 @@ module.exports.edit = function (request, response) {
   })
 }
 
-// 创建新的待办事项 1001
+// 创建新的待办事项
 module.exports.createTodoHandler = function (request, response) {
   const { userid } = request.auth
   const { todoTitle, groupId, tagId, matrixId, groupName, matrixName, priority, tagName } = request.body
@@ -355,7 +355,7 @@ module.exports.getAllTodoHandler = function (request, response) {
     if (error) {
       printSqlError('getAllTodoHandler', error)
       responseResult.status = -1
-      responseResult.message = '服务器内部出现错误'
+      responseResult.message = '服务器跑路了'
       return response.send(responseResult)
     }
     responseResult.status = 1021

@@ -16,16 +16,27 @@
 </template>
 
 <script>
+import { apiGetMatrix } from '@/assets/js/public/api.js'
 import { getGroupRequest } from '@/assets/js/request/groupRequest'
-import { getMatrixRequest } from '@/assets/js/request/matrixRequest'
 import { getTagRequest } from '@/assets/js/request/tagRequest'
 import MainMenu from '@/component/menu/MainMenu.vue'
 export default {
   components: { MainMenu },
 
+  methods: {
+    async getMatrixRequest () {
+      this.$request.get(apiGetMatrix)
+        .then(res => {
+          if (res.status === 601) {
+            this.$store.commit('setMatrixList', res.data.matrixData)
+          }
+        })
+    }
+  },
+
   created () {
     getGroupRequest({ context: this })
-    getMatrixRequest({ context: this })
+    this.getMatrixRequest()
     getTagRequest({ context: this })
   }
 }

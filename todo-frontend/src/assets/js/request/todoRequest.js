@@ -1,6 +1,7 @@
 import {
   apiToggleTodoChecked, apiCreateTodo, apiMoveBin, apiDeleteTodo, apiRegainTodo
 } from '@/assets/js/api/todoAPI'
+import { showMessage } from '../public/publicFunction'
 
 // 切换事项完成状态
 export function toggleTodoCheckedRequest ({ context, requestParams }) {
@@ -16,15 +17,15 @@ export function toggleTodoCheckedRequest ({ context, requestParams }) {
   })
 }
 
-// 创建新的待办事项
+// 请求：创建新的待办事项
 export function createTodoRequest ({ context, requestParams }) {
   return new Promise((resolve, reject) => {
     context.$request.post(apiCreateTodo, requestParams)
       .then(res => {
         if (res.status === 1001) {
           resolve(res.data.todo)
-        } else {
-          console.error('创建新的待办事项失败')
+        } else if (res.status === -1001) {
+          showMessage(context, '标题不能为空', 'info', 800)
         }
       })
   })

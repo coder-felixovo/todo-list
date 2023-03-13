@@ -1,4 +1,4 @@
-/* 待办事项 */
+/* 待办事项相关接口 */
 export const apiToggleTodoChecked = '/api/toggle_todo_checked'
 export const apiCreateTodo = '/api/new_todo'
 export const apiMoveBin = '/api/move_bin'

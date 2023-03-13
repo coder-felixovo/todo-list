@@ -23,10 +23,11 @@
 <script>
 //   { id: 'setting', iconClass: 'el-icon-setting', route: '/setting' }
 const mainMenuData = [
-  { id: 'todo', iconClass: 'el-icon-tickets', route: '/a/collect/todo' },
+  { id: 'todo', iconClass: 'el-icon-tickets', route: '/a/all/todo' },
   { id: 'calendar', iconClass: 'el-icon-date', route: '/b/view/month' },
   { id: 'matrix', iconClass: 'el-icon-menu', route: '/c/matrix' },
   { id: 'search', iconClass: 'el-icon-search', route: '/d/search' },
+  { id: 'time', iconClass: 'el-icon-timer', route: '/time' },
   { id: 'chart', iconClass: 'el-icon-s-data', route: '/statistics' }
 ]
 

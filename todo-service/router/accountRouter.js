@@ -1,18 +1,20 @@
 const express = require('express')
 const router = express.Router()
 
-const { queryUsernameHandler, verifyUsernameHandler, loginHandler, registerHandler } = require('../handler/account.js')
+const {
+  checkUserNameIsRegistered, verifyUsername, verifyPassword,
+  queryUsernameExist, checkPasswordIsCorrect
+} = require('../middleware/accountMw')
+const { register, login, checkUsernameIsUsable } = require('../handler/accountHandler')
 
-router.use((req, res, next) => {
-  if (req.path === '/register' || req.path === '/verify_username') {
-    queryUsernameHandler(req, res, next)
-  } else {
-    next()
-  }
-})
+const registerMwList = [checkUserNameIsRegistered, verifyUsername, verifyPassword]
+router.use('/register', registerMwList)
+const loginMwList = [queryUsernameExist, checkPasswordIsCorrect]
+router.use('/login', loginMwList)
 
-router.get('/verify_username', verifyUsernameHandler)
-router.post('/login', loginHandler)
-router.post('/register', registerHandler)
+router.get('/usable_username', checkUsernameIsUsable)
+router.post('/register', register)
+router.post('/login', login)
+
 
 module.exports = router

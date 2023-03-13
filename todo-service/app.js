@@ -3,6 +3,7 @@ const expressJWT = require('express-jwt')
 const cors = require('cors')
 
 const accountRouter = require('./router/accountRouter')
+const focusRouter = require('./router/focusRouter')
 const groupRouter = require('./router/groupRouter')
 const matrixRouter = require('./router/matrixRouter')
 const searchRouter = require('./router/searchRouter')
@@ -20,7 +21,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-const unlessPath = ['/login', '/register', '/verify_username']
+const unlessPath = ['/login', '/register', '/usable_username']
 
 app.use(
   expressJWT
@@ -34,13 +35,13 @@ app.use(
 )
 
 app.use((request, response, next) => {
+  const responseResult = new ServerResponseResult()
+  request.responseResult = responseResult
   if (unlessPath.includes(request.path)) {
     next()
   } else {
     const { userid } = request.auth
-    const responseResult = new ServerResponseResult()
     if (userid) {
-      request.responseResult = responseResult
       next()
     } else {
       responseResult.operation = '验证用户身份'
@@ -52,6 +53,7 @@ app.use((request, response, next) => {
 })
 
 app.use(accountRouter)
+app.use(focusRouter)
 app.use(groupRouter)
 app.use(matrixRouter)
 app.use(searchRouter)
@@ -62,15 +64,14 @@ app.use(todoViewRouter)
 app.use(userinfoRouter)
 
 app.use((error, request, response, next) => {
+	console.log(1)
+	consolelog(error)
   const responseResult = new ServerResponseResult()
   if (error.name === 'UnauthorizedError') {
     responseResult.status = -999
     responseResult.operation = '验证用户身份'
     responseResult.message = '不通过，原因：无效的token'
     return response.send(responseResult)
-  }
-  if (error instanceof Error) {
-    console.log(error.message)
   }
 })
 

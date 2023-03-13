@@ -1,0 +1,206 @@
+.time-page {
+  position: relative;
+  height: 100%;
+}
+
+.left,
+.right {
+  height: 100%;
+  padding: 0 20px;
+}
+
+.right {
+  border-left: 3px solid rgba(var(--color-grey), 0.1);
+}
+
+.title {
+  padding: 10px 0;
+  margin-bottom: 20px;
+  color: rgb(var(--color-primary));
+  font-size: 26px;
+  font-weight: 500;
+}
+
+/* 选择专注任务区域 */
+.todo-selection {
+  position: relative;
+  margin: 0 auto 20px auto;
+  cursor: pointer;
+}
+
+.select-todo-btn {
+  font-size: 16px;
+  color: rgb(var(--color-primary));
+}
+
+.todo-container {
+  position: absolute;
+  z-index: 100;
+  width: 200px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+
+/* 选择专注任务区域end */
+
+.circle {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  border: 10px solid;
+  border-color: lightblue;
+  border-radius: 50%;
+}
+
+.start-btn,
+.end-btn {
+  width: 150px;
+  height: 50px;
+  border-radius: 75px;
+}
+
+.start-btn {
+  margin: 50px auto 0;
+  color: white;
+  background-color: rgb(var(--bg-color-btn-main));
+}
+
+.end-btn {
+  margin: 20px auto 0;
+  color: rgb(var(--color-main));
+  border-color: rgb(var(--color-main));
+}
+
+.start-btn:hover {
+  background-color: rgb(var(--bg-color-btn-hover-color));
+}
+
+.count-down:hover {
+  cursor: pointer;
+}
+
+.input-wrap {
+  position: absolute;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+
+.time-cancel,
+.time-sure {
+  width: 80px;
+  height: 20px;
+  margin-top: 10px;
+  line-height: 0;
+}
+
+.time-cancel {
+  border-color: rgba(25, 25, 25, 0.3);
+}
+
+.time-sure {
+  color: white;
+  background-color: rgba(var(--bg-color-btn-main), 1);
+}
+
+.time-sure:hover {
+  background-color: rgb(var(--bg-color-btn-hover-color));
+}
+
+.overview {
+  margin-bottom: 20px;
+  .tiny-title {
+    padding: 10px 0 0px 10px;
+    margin-bottom: 10px;
+    color: rgb(var(--color-primary));
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .unit {
+    padding: 10px;
+    background-color: rgb(var(--bg-color-main));
+    border-radius: 12px;
+  }
+}
+
+.record {
+  .head {
+    color: rgb(var(--color-primary));
+    font-size: 22px;
+    font-weight: 500;
+  }
+}
+
+.record-list {
+  margin-top: 15px;
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.record-item:hover {
+  cursor: pointer;
+  background-color: rgb(var(--bg-color-main));
+}
+
+.record-title {
+  font-size: 20px;
+  color: var(rgb(--color-main));
+}
+
+.record-time {
+  width: 80px;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.el-icon-plus:hover {
+  cursor: pointer;
+  background-color: rgb(var(--color-icon-hover));
+}
+
+/* 添加专注记录对话框 */
+:deep(.el-dialog__header) {
+  padding: 20px 10px 10px;
+}
+:deep(.el-dialog__body) {
+  padding: 10px;
+}
+:deep(.el-input__inner) {
+  height: 30px;
+  line-height: 30px;
+}
+:deep(.el-input__icon) {
+  line-height: 30px;
+}
+:deep(.el-textarea__inner) {
+  width: 220px;
+  height: 80px;
+}
+:deep(.el-dialog__footer) {
+  padding: 10px 50px 20px 20px;
+}
+
+.add-record-dialog {
+  .input-item {
+    margin-bottom: 10px;
+  }
+  .tiny-label {
+    width: 70px;
+    margin-right: 10px;
+  }
+}

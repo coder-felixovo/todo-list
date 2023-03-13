@@ -34,7 +34,7 @@
 
 <script>
 import { dayNameInWeek, updateCalendar } from '@/assets/js/public/timeUtils.js'
-import { getMonthTodoReuest } from '@/assets/js/request/todoViewRequest'
+import { getMonthTodoReuest } from '@/views/todo-view/index.js'
 import TodoItem from '@/component/TodoItem'
 export default {
   name: 'todo-month-view',
@@ -117,5 +117,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "@/assets/css/views/todoView.less";
+@import "@/views/todo-view/index.less";
 </style>

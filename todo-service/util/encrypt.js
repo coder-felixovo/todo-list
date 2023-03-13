@@ -6,7 +6,6 @@ const pad = crypto.pad
 
 const aesKey = 'cBssbHB3ZA==HKXT'
 
-// 加密
 const encrypt = function (password) {
   const encryption = AES.encrypt(password, enc.Utf8.parse(aesKey), {
     mode: mode.ECB,
@@ -14,7 +13,7 @@ const encrypt = function (password) {
   })
   return encryption.toString()
 }
-// 解密
+
 const decrypt = function (encryption) {
   const decryption = AES.decrypt(encryption, enc.Utf8.parse(aesKey), {
     mode: mode.ECB,

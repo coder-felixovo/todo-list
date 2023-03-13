@@ -8,7 +8,7 @@ const {
 const { generateDatetime } = require('../util/time')
 const { handleQueryResult, printSqlError, setServerErrorReponseResult } = require('../util/public')
 
-// 为用户创建默认待办事项分组
+// 为用户创建默认待办事项分组（已放弃）
 module.exports.initializeGroup = function (userid) {
   const groupId = uuid().split('-').join('').slice(0, 15)
   const createTime = generateDatetime()

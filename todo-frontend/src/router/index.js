@@ -5,10 +5,10 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', name: '/', redirect: '/login' },
-  { path: '/login', name: 'login', component: () => import('@/views/Login.vue') },
-  { path: '/register', name: 'register', component: () => import('../views/Register.vue') },
+  { path: '/login', name: 'login', component: () => import('@/views/login/login.vue') },
+  { path: '/register', name: 'register', component: () => import('../views/register/register.vue') },
   { path: '/test', name: 'test', component: () => import('../views/Test.vue') },
-  { path: '/statistics', name: 'statistics', component: () => import('@/views/Statistics.vue') },
+  { path: '/statistics', name: 'statistics', component: () => import('@/views/statistics/statistics.vue') },
   {
     path: '/main',
     name: 'main',
@@ -27,11 +27,11 @@ const routes = [
       {
         path: '/b/view',
         name: 'todoView',
-        component: () => import('@/views/todoView/TodoView.vue'),
+        component: () => import('@/views/todo-view/View.vue'),
         children: [
-          { path: '/b/view/month', name: 'todoMonth', component: () => import('@/views/todoView/TodoMonth.vue') },
-          { path: '/b/view/week', name: 'todoWeek', component: () => import('@/views/todoView/TodoWeek.vue') },
-          { path: '/b/view/day', name: 'todoDay', component: () => import('@/views/todoView/TodoDay.vue') }
+          { path: '/b/view/month', name: 'todoMonth', component: () => import('@/views/todo-view/Month.vue') },
+          { path: '/b/view/week', name: 'todoWeek', component: () => import('@/views/todo-view/Week.vue') },
+          { path: '/b/view/day', name: 'todoDay', component: () => import('@/views/todo-view/Day.vue') }
         ]
       },
       {
@@ -42,7 +42,12 @@ const routes = [
       {
         path: '/d/search',
         name: 'search',
-        component: () => import('@/views/search/Search.vue')
+        component: () => import('@/views/search/search.vue')
+      },
+      {
+        path: '/time',
+        name: 'time',
+        component: () => import('@/views/time/index.vue')
       }
     ]
   },

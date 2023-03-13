@@ -17,7 +17,8 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/no-use-v-if-with-v-for': 'off',
     camelcase: 'off',
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    'prefer-const': 0
   },
   overrides: [
     {

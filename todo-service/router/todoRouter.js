@@ -3,7 +3,7 @@ const router = express.Router()
 
 const {
   prevAddTodo, prevMoveTodoInBin, prevDeleteTodo, prevToggleTodoCompletionStatus, prevRegainTodo,
-  prevSaveTodoDetail, prevGetTodoDetail, prevUpdateTodoTitle, prevEdit, prevGetTagTodo, prevCreateNewTodo
+  prevSaveTodoDetail, prevGetTodoDetail, prevUpdateTodoTitle, prevEdit, prevGetTagTodo, prevCreateTodo
 } = require('../middleware/todoMw')
 
 const {
@@ -13,6 +13,7 @@ const {
   getMonthTodoHandler, deleteAllTodoHandler, edit, getTagTodoHandler, createTodoHandler
 } = require('../handler/todoHandler.js')
 
+router.use('/new_todo', prevCreateTodo)
 router.use('/add_todo', prevAddTodo)
 router.use('/move_bin', prevMoveTodoInBin)
 router.use('/del_todo', prevDeleteTodo)
@@ -23,9 +24,9 @@ router.use('/get_todo_detail', prevGetTodoDetail)
 router.use('/update_todo_title', prevUpdateTodoTitle)
 router.use('/edit', prevEdit)
 router.use('/get_tag_todo', prevGetTagTodo)
-router.use('/new_todo', prevCreateNewTodo)
 
 
+router.post('/new_todo', createTodoHandler)
 router.post('/add_todo', addTodoHandler)
 router.post('/move_bin', moveTodoInBinHandler)
 router.post('/del_todo', deleteTodoHandler)
@@ -36,7 +37,7 @@ router.get('/get_todo_detail', getTodoDetailHandler)
 router.post('/update_todo_title', updateTodoTitleHandler)
 router.post('/delete_all_todo', deleteAllTodoHandler)
 router.post('/edit', edit)
-router.post('/new_todo', createTodoHandler)
+
 
 router.get('/get_all_todo', getAllTodoHandler)
 router.get('/get_collect_todo', getCollectTodoHandler)

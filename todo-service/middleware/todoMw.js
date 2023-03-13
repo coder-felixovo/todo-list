@@ -1,7 +1,7 @@
 /* todo 路由中间件 处理函数 */
 const { formatDateObject } = require('../util/time')
 
-// 预处理：添加待办事项 √
+// 预处理：添加待办事项
 module.exports.prevAddTodo = function (request, response, next) {
   const { todoGroupId, todoTitle } = request.body
   const { responseResult } = request
@@ -141,8 +141,8 @@ module.exports.prevGetTagTodo = function (request, response, next) {
   }
 }
 
-// 预处理：创建新的待办事项
-module.exports.prevCreateNewTodo = function (request, response, next) {
+// 中间件：创建新的待办事项，参数验证
+module.exports.prevCreateTodo = function (request, response, next) {
   const { todoTitle } = request.body
   const { responseResult } = request
   responseResult.operation = '创建新的待办事项'
