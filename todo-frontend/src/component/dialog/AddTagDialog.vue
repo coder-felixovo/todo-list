@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { showMessage } from '@/assets/js/public/publicFunction.js'
 import { apiAddTag } from '@/assets/js/public/api.js'
 export default {
   name: 'add-group-dialog',

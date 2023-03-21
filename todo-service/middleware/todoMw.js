@@ -116,13 +116,13 @@ module.exports.prevUpdateTodoTitle = function (request, response, next) {
 
 // 预处理：编辑
 module.exports.prevEdit = function (request, response, next) {
-  const { todoId, todoTitle, groupId } = request.body
+  const { todoId, todoTitle } = request.body
   const { responseResult } = request
-  if (todoId && todoTitle && groupId) {
+  if (todoId && todoTitle) {
     next()
   } else {
     responseResult.status = -1010
-    responseResult.message = '更新失败，原因：参数todoId、todoTitle或groupId为空'
+    responseResult.message = '更新失败，原因：参数为空'
     return response.send(responseResult)
   }
 }

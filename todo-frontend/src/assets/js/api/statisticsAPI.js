@@ -1,4 +1,5 @@
 /* 数据统计 接口 */
-export const apiGetTotal = '/api/tj_total'
-export const apiGetToday = '/api/tj_today'
-export const apiLatestSevenDays = '/api/latest_seven_days'
+export const apiGetTotalStat = '/api/total_stat'
+export const apiGetTodayStat = '/api/today_stat'
+export const apiGetLineSevenStat = '/api/line_seven_stat'
+export const apiTagDoneNums = '/api/tag_done_nums'

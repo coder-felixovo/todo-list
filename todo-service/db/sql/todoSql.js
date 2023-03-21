@@ -160,9 +160,11 @@ SELECT
 FROM todo as t
 LEFT OUTER JOIN todo_tag as tt
 ON
-	t.user_id = ?
-	AND t.todo_tag_id = tt.tag_id
-WHERE t.todo_status = 1 AND t.todo_checked = 1
+  t.todo_tag_id = tt.tag_id
+WHERE 
+  t.user_id = ?
+  AND t.todo_status = 1 
+  AND t.todo_checked = 1
 GROUP BY 
   createTime DESC,
   todoId DESC

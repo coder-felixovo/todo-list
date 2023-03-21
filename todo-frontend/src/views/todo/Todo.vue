@@ -280,7 +280,6 @@ export default {
     },
 
     unshiftNewTag (busData) {
-      // busData: { tagId, tagName }
       busData ? this.tagList.unshift(busData) : console.log('空的标签数据')
     },
 
@@ -307,6 +306,8 @@ export default {
     this.$bus.$off('bus-open-texteditor').$on('bus-open-texteditor', this.openTextEditor)
     // 来自AddGroupDialog.vue
     this.$bus.$off('bus-new-group').$on('bus-new-group', this.unshiftNewGroup)
+    // 来自AddTagDialog.vue
+    this.$bus.$off('bus-new-tag').$on('bus-new-tag', this.unshiftNewTag)
     // 来自TagMenu.vue
     this.$bus.$off('bus-remove-tag').$on('bus-remove-tag', this.removeTag)
     this.$bus.$off('bus-new-tagname').$on('bus-new-tagname', this.updateTagName)

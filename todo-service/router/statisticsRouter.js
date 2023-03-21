@@ -1,13 +1,14 @@
 const express = require('express')
 const router = express.Router()
 
-/* tj: statistics */
 const {
-  getTjTotalHandler, getTjTodayHandler, getLatestSevenDays
+  getTotalStatHandler, getTodayStatHandler, getLineSevenStatHandler,
+  getPieDoneTodoNumsOfTag
 } = require('../handler/statisticsHandler')
 
-router.get('/tj_total', getTjTotalHandler)
-router.get('/tj_today', getTjTodayHandler)
-router.get('/latest_seven_days', getLatestSevenDays)
+router.get('/total_stat', getTotalStatHandler)
+router.get('/today_stat', getTodayStatHandler)
+router.get('/line_seven_stat', getLineSevenStatHandler)
+router.get('/tag_done_nums', getPieDoneTodoNumsOfTag)
 
 module.exports = router

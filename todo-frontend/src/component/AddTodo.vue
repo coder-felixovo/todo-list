@@ -73,9 +73,14 @@ export default {
         groupName: this.groupName
       })
       const newTodo = await createTodoRequest({ context: this, requestParams })
+      // 清理
       this.todoTitle = ''
+      this.todoDeadline = ''
+      this.todoGroupId = ''
+      this.todoGroupName = ''
       this.$refs.addTodoInputRef.blur()
-      this.$bus.$emit('bus-new-todo', newTodo) // 发送至TodoList.vue
+      // 更新视图，发送至TodoList.vue
+      this.$bus.$emit('bus-new-todo', newTodo)
     },
 
     openDatetimePicker () {

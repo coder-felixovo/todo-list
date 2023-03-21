@@ -64,8 +64,8 @@ app.use(todoViewRouter)
 app.use(userinfoRouter)
 
 app.use((error, request, response, next) => {
-	console.log(1)
-	consolelog(error)
+  console.log(1)
+  consolelog(error)
   const responseResult = new ServerResponseResult()
   if (error.name === 'UnauthorizedError') {
     responseResult.status = -999

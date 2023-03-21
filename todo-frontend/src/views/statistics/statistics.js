@@ -28,58 +28,74 @@ export function createLineChartOption () {
     },
     series: [
       {
-        data: [],
         type: 'line',
+        data: [],
         smooth: false
       }
     ],
     tooltip: {
-      show: true
+      formatter: '日期：{b} <br />完成：{c}'
     }
   }
   return lineChartOption
 }
 
 // 饼图配置
-export const pieChartOption = {
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
-    top: '5%',
-    left: 0,
-    orient: 'vertical'
-  },
-  series: [
-    {
-      name: 'Access From',
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 2
+export function createPieChartOption () {
+  const pieChartOption = {
+    title: {
+      show: true,
+      text: '按标签类别统计任务完成情况',
+      textAlign: 'center',
+      left: '400',
+      textStyle: {
+        color: '#333',
+        fontSize: 20,
+        fontWeight: 500
       },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 24,
-          fontWeight: 500
+      subtext: '2023',
+      subtextStyle: {
+        fontSize: 16,
+        fontWeight: 300
+      }
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      top: '60',
+      left: 0,
+      orient: 'vertical'
+    },
+    series: [
+      {
+        type: 'pie',
+        top: '60',
+        left: 'center',
+        width: '300',
+        height: '300',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 20,
+            fontWeight: 300
+          }
+        },
+        data: [],
+        tooltip: {
+          formatter: '标签：{b}<br />完成：{c}<br />占比：{d}%'
         }
-      },
-      labelLine: {
-        show: false
-      },
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
-      ]
-    }
-  ]
+      }
+    ]
+  }
+  return pieChartOption
 }
 
 function LatestSeven () {

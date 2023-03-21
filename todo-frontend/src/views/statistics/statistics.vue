@@ -27,11 +27,11 @@
               <h2 class="fs-22px fw-500 pt-10px">总计</h2>
               <ul class="flex justify-start items-center">
                 <li class="mr-20px">
-                  <span class="color-primary fw-600">{{todoSum}}</span>
+                  <span class="color-primary fw-600">{{todoNums}}</span>
                   <span class="ml-10px color-primary opacity-80">任务</span>
                 </li>
                 <li class="mr-20px">
-                  <span class="color-primary fw-600">{{finishedTodoSum}}</span>
+                  <span class="color-primary fw-600">{{doneTodoNums}}</span>
                   <span class="ml-10px color-primary opacity-80">已完成</span>
                 </li>
                 <li class="mr-20px">
@@ -47,7 +47,7 @@
               <h2 class="fs-22px fw-500 pt-10px">今日</h2>
               <div class="flex justify-around pl-10px pr-10px">
                 <div>
-                  <p class="color-main text-center fs-26px">{{todayDoneTodoCount}}</p>
+                  <p class="color-main text-center fs-26px">{{todayDoneTodoNums}}</p>
                   <p class="mt-5px color-grey fs-16px fw-400 text-center">已完成</p>
                 </div>
                 <div>
@@ -56,18 +56,20 @@
                 </div>
               </div>
             </div>
+            <!-- 折线图：近七日完成情况 -->
             <div class="linechart-box pl-20px pr-20px mt-20px">
               <h2 class="fs-22px fw-500 pt-10px">任务</h2>
               <div
                 id="linechart"
-                style="width: 850px; height:300px;"
+                style="width: 850px; height:400px;"
               ></div>
             </div>
+            <!-- 饼状图：按标签类别统计 -->
             <div class="piechart-box pl-20px pr-20px mt-20px">
               <h2 class="fs-22px fw-500 pt-10px">标签</h2>
               <div
                 id="piechart"
-                style="width: 850px; height:300px;"
+                style="width: 850px; height:400px;"
               ></div>
             </div>
           </div>
@@ -93,8 +95,8 @@ import { LabelLayout, UniversalTransition } from 'echarts/features'
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from 'echarts/renderers'
 
-import { apiGetTotal, apiGetToday, apiLatestSevenDays } from '@/assets/js/api/statisticsAPI.js'
-import { createLineChartOption, createLatestSevenArray, pieChartOption } from '@/assets/js/views/statistics.js'
+import { apiGetTotalStat, apiGetTodayStat, apiGetLineSevenStat, apiTagDoneNums } from '@/assets/js/api/statisticsAPI.js'
+import { createLineChartOption, createLatestSevenArray, createPieChartOption } from './statistics.js'
 
 echarts.use([
   TitleComponent,
@@ -115,50 +117,77 @@ export default {
   data () {
     return {
       isShowScroll: false,
-      todoSum: 0,
-      finishedTodoSum: 0,
+      todoNums: 0,
+      doneTodoNums: 0,
       joinDays: 0,
-      todayDoneTodoCount: 0,
-      todayFocusHours: '',
-      todayFocusMinute: '',
+      todayDoneTodoNums: 0,
+      todayFocusTime: 0,
+      todayFocusTimeText: '',
+      todayFocusHours: '0',
+      todayFocusMinute: '0',
       lineChartOption: null,
-      pieChartOption: pieChartOption
+      pieChartOption: null
     }
   },
 
   methods: {
     backToMainPage () {
-      this.$router.push('/a/collect/todo')
+      this.$router.push('/a/all/todo')
     },
 
-    getTotal () {
-      this.$request.get(apiGetTotal)
+    async reqGetTotalStat () {
+      this.$request.get(apiGetTotalStat)
         .then(res => {
           if (res.status === 701) {
             if (res.data) {
-              const { todoSum, finishedTodoSum, joinDays } = res.data
-              this.todoSum = todoSum
-              this.finishedTodoSum = finishedTodoSum
+              const { totalTodoNums, totalDoneTodoNums, joinDays } = res.data
+              this.todoNums = totalTodoNums
+              this.doneTodoNums = totalDoneTodoNums
               this.joinDays = joinDays
             }
           }
         })
     },
 
-    getToday () {
-      this.$request.get(apiGetToday)
+    async reqGetTodayStat () {
+      this.$request.get(apiGetTodayStat)
         .then(res => {
           if (res.status === 702) {
-            const { todayDoneTodoCount, todayFocusHours, todayFocusMinute } = res.data
-            this.todayDoneTodoCount = todayDoneTodoCount
-            this.todayFocusHours = todayFocusHours
-            this.todayFocusMinute = todayFocusMinute
+            const { todayDoneTodoNums, todayFocusTime } = res.data
+            this.todayDoneTodoNums = todayDoneTodoNums || 0
+            this.todayFocusTime = todayFocusTime || 0
+            this.todayFocusTimeText = this.focusTime === 0 ? '0h0min' : this.handleFocusTimeText(this.focusTime)
           }
         })
     },
 
-    getLatestSevenDays () {
-      this.$request.get(apiLatestSevenDays)
+    handleFocusTimeText (time = 0) {
+      if (!typeof time === 'numer' || !Number.isNaN(time)) return
+      let leftSeconds
+      if (time < 60) {
+        return time + 's'
+      } else if (time < 3600) {
+        const minutes = Math.floor(time / 60)
+        leftSeconds = time - minutes * 60
+        return leftSeconds === 0 ? minutes + 'min' : minutes + 'min' + leftSeconds + 's'
+      } else {
+        const hours = Math.floor(time / 3600)
+        leftSeconds = time - hours * 3600
+        if (leftSeconds === 0) {
+          return hours + 'h'
+        }
+        const minutes = Math.floor(leftSeconds / 60)
+        leftSeconds = leftSeconds - minutes * 60
+        if (leftSeconds === 0) {
+          return hours + 'h' + minutes + 'min'
+        } else {
+          return hours + 'h' + minutes + 'min' + leftSeconds + 's'
+        }
+      }
+    },
+
+    async reqGetLatestSevenDays () {
+      this.$request.get(apiGetLineSevenStat)
         .then(res => {
           if (res.status === 703) {
             if (res.data) {
@@ -185,18 +214,37 @@ export default {
             }
           }
         })
+    },
+
+    async reqTagDoneNums () {
+      this.$request.get(apiTagDoneNums)
+        .then(res => {
+          if (res.status === 704) {
+            const { title, data } = res.data
+            const pieOption = createPieChartOption()
+            pieOption.title.text = title
+            data.forEach(element => {
+              pieOption.series[0].data.push({ name: element.tagName, value: element.doneTodoNums })
+            })
+            this.pieChartOption = pieOption
+            this.$nextTick(() => {
+              const myLineChart = echarts.init(document.getElementById('piechart'))
+              myLineChart.setOption(this.pieChartOption)
+            })
+          }
+        })
     }
   },
 
   created () {
-    this.getTotal()
-    this.getToday()
-    this.getLatestSevenDays()
+    this.pieChartOption = createPieChartOption()
+    this.reqGetTotalStat()
+    this.reqGetTodayStat()
+    this.reqGetLatestSevenDays()
+    this.reqTagDoneNums()
   },
 
   mounted () {
-    const myLineChart = echarts.init(document.getElementById('piechart'))
-    myLineChart.setOption(this.pieChartOption)
   }
 }
 </script>

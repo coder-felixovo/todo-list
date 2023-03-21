@@ -81,10 +81,6 @@
           <span class="pl-5 text-overflow">{{deadlineText}}</span>
         </div>
       </div>
-      <!-- 更多图标显示区 -->
-      <!--       <div class="menu-icon ml-10px mr-10px opacity-40">
-        <i class="el-icon-more"></i>
-      </div> -->
     </div>
   </div>
 </template>

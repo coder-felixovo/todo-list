@@ -146,6 +146,7 @@ export default {
         return
       }
       const requestParams = new Todo({
+        todoId: this.operatedTodoId,
         todoTitle: this.ipt_title,
         todoDeadline: this.ipt_deadline,
         groupId: this.ipt_groupId,
@@ -172,9 +173,10 @@ export default {
   },
 
   created () {
-    if (this.$store.state.addOrEditFlag === 'edit') {
-      this.setDataInCreated()
-    }
+    this.setDataInCreated()
+    // if (this.$store.state.addOrEditFlag === 'edit') {
+    //   this.setDataInCreated()
+    // }
   },
 
   computed: {
