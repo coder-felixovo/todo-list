@@ -1,5 +1,3 @@
-/* 搜索 路由中间件 */
-
 module.exports.checkSearchContent = function (request, response, next) {
   const { str } = request.query
   const { responseResult } = request

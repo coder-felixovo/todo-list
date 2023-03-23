@@ -11,6 +11,7 @@ export default {
   isShowTagMenu: false,
   isShowAddTodoPopover: false,
   isShowDatetimePicker: false,
+  isShowSearchDialog: false,
 
   // 控制AddTodoPopover是添加还是编辑
   addOrEditFlag: '',
@@ -40,6 +41,10 @@ export default {
 
   // 操作待办事项
   // 例如：获取待办事项详情、切换待办事项状态、删除待办事项等
-  operatedTodo: null
+  operatedTodo: null,
+
+  searchGroup: [],
+  searchTag: [],
+  searchTodo: []
 
 }

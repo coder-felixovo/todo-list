@@ -1,5 +1,3 @@
-/* 搜索 sql */
-
 module.exports.sqlSearch = `
 SELECT
   t.todo_id as todoId,
@@ -30,4 +28,30 @@ GROUP BY
   createTime DESC,
   todoChecked ASC,
   todoId DESC
+`
+
+// 搜索分组
+module.exports.sqlSearchGroup = `
+SELECT
+	group_id as groupId,
+	group_name as groupName,
+	group_icon as groupIcon
+FROM
+	todo_group
+WHERE
+	user_id = ?
+	AND group_name like ?
+`
+
+// 搜索标签
+module.exports.sqlSearchTag = `
+SELECT
+	tag_id as tagId,
+	tag_name as tagName,
+	tag_icon as tagIcon
+FROM 
+	todo_tag
+WHERE
+	user_id = ?
+	AND tag_name like ?
 `

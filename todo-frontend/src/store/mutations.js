@@ -34,6 +34,9 @@ export default {
   toggleDatetimePicker (state, value) {
     state.isShowDatetimePicker = !state.isShowDatetimePicker
   },
+  toggleSearchDialog (state, value) {
+    state.isShowSearchDialog = !state.isShowSearchDialog
+  },
 
   setTodoPopoverMode (state, value) {
     state.addOrEditFlag = value
@@ -82,6 +85,13 @@ export default {
   // 操作待办事项
   setOperatedTodo (state, value) {
     state.operatedTodo = value
+  },
+
+  setSearchResult (state, value) {
+    const { searchGroupResult, searchTagResult, searchTodoResult } = value
+    state.searchGroup = searchGroupResult || []
+    state.searchTag = searchTagResult || []
+    state.searchTodo = searchTodoResult || []
   }
 
 }
