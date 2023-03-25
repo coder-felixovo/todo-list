@@ -9,15 +9,13 @@
         <span>{{e.name}}</span>
       </div>
     </div>
-    <div
-      class="day-of-month"
-      @click.right="onRightClickEvent"
-    >
+    <div class="day-of-month">
       <div
         class="cell"
         v-for="item in days"
         :key="item.id"
         :date="item.date"
+        @click="clickEvent"
       >
         <span class="fs-14px">{{item.day}}</span>
         <template v-for="e in todoList">
@@ -35,7 +33,9 @@
 <script>
 import { dayNameInWeek, updateCalendar } from '@/assets/js/public/timeUtils.js'
 import { getMonthTodoReuest } from '@/views/todo-view/index.js'
+import { apiToggleTodoChecked } from '@/assets/js/api/api'
 import TodoItem from '@/component/TodoItem'
+import { showMessage } from '@/assets/js/public/publicFunction'
 export default {
   name: 'todo-month-view',
 
@@ -94,7 +94,40 @@ export default {
       getMonthTodoReuest({ context: this, requestParams })
     },
 
-    onRightClickEvent () {}
+    async reqToggleTodoChecked (reqParam) {
+      return new Promise((resolve, reject) => {
+        this.$request.post(apiToggleTodoChecked, reqParam)
+          .then(res => {
+            if (res.status === 1004) {
+              resolve(res.data)
+            }
+          })
+          .catch(error => {
+            if (error) {
+              showMessage(this, '无效的操作', 'info', 800)
+            }
+          })
+      })
+    },
+
+    async clickEvent() {
+      const clickDOM = event.composedPath()[0]
+      if (!clickDOM) return
+      if (clickDOM._prevClass.includes('bi-square')) {
+        // 完成待办事项
+        const { todoId, todoChecked } = event.composedPath().find(element => element._prevClass.includes('todo-item')).__vue__.todo
+        const reqParam = {
+          todoId,
+          originalChecked: todoChecked,
+          targetChecked: todoChecked === 0 ? 1 : 0
+        }
+        const result = await this.reqToggleTodoChecked(reqParam)
+        const { _todoId } = result
+        const index = this.todoList.findIndex(element => element.todoId === _todoId)
+        this.todoList.splice(index, 1)
+      }
+    }
+
   },
 
   created () {

@@ -34,6 +34,7 @@ LEFT OUTER JOIN todo_tag as tt
 ON t.todo_tag_id = tt.tag_id
 WHERE 
   t.user_id = ? 
+  AND todo_checked = 0
   AND todo_status = 1 
   AND todo_deadline BETWEEN ? AND ?
 GROUP BY 

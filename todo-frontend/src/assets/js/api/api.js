@@ -1,5 +1,6 @@
 /* 待办事项相关接口 */
 export const apiGetAllTodo = '/api/get_all_todo'
+export const apiToggleTodoChecked = '/api/toggle_todo_checked'
 
 /* 任务专注相关接口 */
 export const apiGetTodoInFocus = '/api/todo_in_focus'
