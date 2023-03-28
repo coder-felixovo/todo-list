@@ -1,6 +1,7 @@
 const uuid = require('node-uuid/uuid')
 const db = require('../db/config.js')
-const { 
+const { dbFocusDetail } = require('../db/operation/focusDb')
+const {
 	sqlGetTodoInFocus, sqlAddFocusRecord, sqlGetFocusRecord,
 	sqlTodayFocusStat, sqlTotalFocusStat
 } = require('../db/sql/focusSql')
@@ -49,9 +50,9 @@ module.exports.getTodoInFocusHandler = async function (request, response) {
  * @param {Object} response
  */
 module.exports.addFocusRecordHandler = async function (request, response) {
-  const { userid } = request.auth
-  const { todoId, todoTitle, startTime, endTime, note, focusTime } = request.body
-  const { responseResult } = request
+	const { userid } = request.auth
+	const { todoId, todoTitle, startTime, endTime, note, focusTime } = request.body
+	const { responseResult } = request
 	let _focusTime
 	if (focusTime && typeof focusTime === 'number' && !Number.isNaN(focusTime)) {
 		_focusTime = focusTime
@@ -61,29 +62,29 @@ module.exports.addFocusRecordHandler = async function (request, response) {
 		_focusTime = _end - _start
 	}
 	const focusId = uuid().split('-').join('').slice(0, 15)
-  const createTime = generateDatetime()
-  const _startTime = formatDateObject(new Date(startTime))
-  const _endTime = formatDateObject(new Date(endTime))
-  const sqlParams = [userid, focusId, todoId,  _focusTime, createTime, _startTime, _endTime, note]
-  db.query(sqlAddFocusRecord, sqlParams, (error, resutls) => {
-    if (error) {
-      responseResult.status = -1
-      responseResult.message = '服务器跑路了'
-      return response.send(responseResult)
-    }
-    if (resutls.affectedRows === 1) {
-      responseResult.status = 5002
-      responseResult.data = {
+	const createTime = generateDatetime()
+	const _startTime = formatDateObject(new Date(startTime))
+	const _endTime = formatDateObject(new Date(endTime))
+	const sqlParams = [userid, focusId, todoId, _focusTime, createTime, _startTime, _endTime, note]
+	db.query(sqlAddFocusRecord, sqlParams, (error, resutls) => {
+		if (error) {
+			responseResult.status = -1
+			responseResult.message = '服务器跑路了'
+			return response.send(responseResult)
+		}
+		if (resutls.affectedRows === 1) {
+			responseResult.status = 5002
+			responseResult.data = {
 				focusId,
-        todoId,
-        todoTitle,
-        focusTime: _focusTime,
-        createTime,
+				todoId,
+				todoTitle,
+				focusTime: _focusTime,
+				createTime,
 				note,
-      }
+			}
 			response.send(responseResult)
-    }
-  })
+		}
+	})
 }
 
 /**
@@ -129,6 +130,24 @@ module.exports.focusStatHandler = function (request, response) {
 			responseResult.message = '获取失败'
 			response.send(responseResult)
 		})
+}
+
+module.exports.focusDetailHandler = async function (request, response) {
+	const { userid } = request.auth
+	const { responseResult } = request
+	const { focusId } = request.query
+	responseResult.operation = '获取专注详情'
+	const queryResult = await dbFocusDetail(userid, focusId)
+	if (queryResult instanceof Error) {
+		responseResult.status = -1
+		responseResult.message = '服务器跑路了'
+		response.send(responseResult)
+	} else {
+		responseResult.status = 5005
+		responseResult.message = '成功'
+		responseResult.data = queryResult[0]
+		response.send(responseResult)
+	}
 }
 
 

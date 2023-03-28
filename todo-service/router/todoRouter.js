@@ -10,7 +10,7 @@ const {
   addTodoHandler, moveTodoInBinHandler, deleteTodoHandler, toggleTodoCompletionStatusHandler, regainTodoHandler,
   saveTodoDetailHandler, getTodoDetailHandler, updateTodoTitleHandler, getAllTodoHandler, getCollectTodoHandler,
   getTodayTodoHandler, getGroupTodoHandler, getCompletedTodoHandler, getBinTodoHandler, getTomorrowTodoHandler,
-  getMonthTodoHandler, deleteAllTodoHandler, edit, getTagTodoHandler, createTodoHandler
+  getMonthTodoHandler, deleteAllTodoHandler, edit, getTagTodoHandler, createTodo
 } = require('../handler/todoHandler.js')
 
 router.use('/new_todo', prevCreateTodo)
@@ -26,7 +26,7 @@ router.use('/edit', prevEdit)
 router.use('/get_tag_todo', prevGetTagTodo)
 
 
-router.post('/new_todo', createTodoHandler)
+router.post('/new_todo', createTodo)
 router.post('/add_todo', addTodoHandler)
 router.post('/move_bin', moveTodoInBinHandler)
 router.post('/del_todo', deleteTodoHandler)

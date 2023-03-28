@@ -12,6 +12,7 @@ export default {
   isShowAddTodoPopover: false,
   isShowDatetimePicker: false,
   isShowSearchDialog: false,
+  isShowTextEditor: false,
 
   // 控制AddTodoPopover是添加还是编辑
   addOrEditFlag: '',

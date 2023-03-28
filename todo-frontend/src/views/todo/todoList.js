@@ -33,10 +33,18 @@ export function getAllTodoHandler (context) {
   _this.$request.get(apiGetAllTodo)
     .then(res => {
       if (res.status === 1021) {
-        if (res.data) {
-          _this.uncheckedTodoList = res.data.uncheckedTodoData
-          _this.checkedTodoList = res.data.checkedTodoData
-        }
+        let { todoData } = res.data
+        const uncheckedList = []
+        const checkedList = []
+        todoData.forEach(element => {
+          if (element.todoChecked === 0) {
+            uncheckedList.push(element)
+          } else {
+            checkedList.push(element)
+          }
+        })
+        _this.uncheckedTodoList = uncheckedList
+        _this.checkedTodoList = checkedList
       }
     })
 }

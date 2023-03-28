@@ -18,12 +18,12 @@ export function createLineChartOption () {
       }
     },
     xAxis: {
-      name: '',
+      name: '日期',
       type: 'category',
       data: []
     },
     yAxis: {
-      name: '',
+      name: '完成数量',
       type: 'value'
     },
     series: [
@@ -98,27 +98,103 @@ export function createPieChartOption () {
   return pieChartOption
 }
 
-function LatestSeven () {
-  const object = {
-    date: '',
-    number: 0
+// 柱状图配置
+export function createHistogramOption () {
+  const histogramOption = {
+    title: {
+      show: true,
+      text: '柱状图示例',
+      textAlign: 'center',
+      left: 'center',
+      textStyle: {
+        color: '#333',
+        fontSize: 20,
+        fontWeight: 500
+      },
+      subtext: '2023',
+      subtextStyle: {
+        fontSize: 16,
+        fontWeight: 300
+      }
+    },
+    xAxis: {
+      type: 'category',
+      name: '日期',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value',
+      alignTicks: true,
+      name: '时长/分钟',
+      nameLocation: 'end'
+    },
+    series: [
+      {
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar',
+        showBackground: true,
+        backgroundStyle: {
+          color: 'rgba(180, 180, 180, 0.2)'
+        },
+        tooltip: {
+          formatter: '专注时长：{c} 分钟'
+        }
+      }
+    ],
+    tooltip: {
+      show: true
+    }
   }
-  return object
+  return histogramOption
+}
+
+class LatestSeven {
+  constructor() {
+    this.date = ''
+    this.value = 0
+  }
 }
 // 生成"最近七天"需要的对象结构
 export function createLatestSevenArray () {
-  const dateObj = new Date()
-  const year = dateObj.getFullYear()
-  let month = dateObj.getMonth() + 1
+  // 获取今天日期，设置为0时0分0秒0毫秒，再转换为毫秒数
+  const todayObj = new Date()
+  const year = todayObj.getFullYear()
+  let month = todayObj.getMonth() + 1
+  let date = todayObj.getDate()
   month = month < 10 ? '0' + month : month
-  let date = dateObj.getDate() - 3
+  date = date < 10 ? '0' + date : date
+  todayObj.setHours(0)
+  todayObj.setMinutes(0)
+  todayObj.setSeconds(0)
+  todayObj.setMilliseconds(0)
+  const todayTime = todayObj.getTime()
   const resultArray = []
-  for (let i = 1; i <= 7; i++) {
+  // 前3天
+  for (let i = 0, j = 3; i < 3; i++, j--) {
     const obj = new LatestSeven()
-    const tempDate = date < 10 ? '0' + date : date
-    obj.date = year + '-' + month + '-' + tempDate
+    const dateObj = new Date(todayTime - j * 24 * 60 * 60 * 1000)
+    const year = dateObj.getFullYear()
+    let month = dateObj.getMonth() + 1
+    month = month < 10 ? '0' + month : month
+    let date = dateObj.getDate()
+    date = date < 10 ? '0' + date : date
+    obj.date = year + '-' + month + '-' + date
     resultArray.push(obj)
-    date++
+  }
+  const _today = new LatestSeven()
+  _today.date = year + '-' + month + '-' + date
+  resultArray.push(_today)
+  // 后3天
+  for (let i = 0, j = 1; i < 3; i++, j++) {
+    const obj = new LatestSeven()
+    const dateObj = new Date(todayTime + j * 24 * 60 * 60 * 1000)
+    const year = dateObj.getFullYear()
+    let month = dateObj.getMonth() + 1
+    month = month < 10 ? '0' + month : month
+    let date = dateObj.getDate()
+    date = date < 10 ? '0' + date : date
+    obj.date = year + '-' + month + '-' + date
+    resultArray.push(obj)
   }
   return resultArray
 }

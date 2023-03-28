@@ -202,8 +202,7 @@ export default {
       isShowGroup: true,
       isShowGroupScroll: false,
       isShowTag: true,
-      isShowTagScroll: false,
-      isShowTextEditor: false
+      isShowTagScroll: false
     }
   },
 
@@ -275,7 +274,7 @@ export default {
     },
     openTextEditor (value) {
       if (!this.isShowTextEditor) {
-        this.isShowTextEditor = true
+        this.$store.commit('toggleTextEditor')
       }
     },
 
@@ -321,6 +320,9 @@ export default {
     tagList () {
       const tagList = this.$store.state.tagList
       return tagList || []
+    },
+    isShowTextEditor () {
+      return this.$store.state.isShowTextEditor
     }
   }
 }

@@ -1,17 +1,19 @@
-/* 分组 请求 */
 import { apiGetGroup, apiUpdateGroupName, apiDeleteGroup } from '@/assets/js/api/groupAPI.js'
 
-export function getGroupRequest ({ context }) {
-  context.$request.get(apiGetGroup)
-    .then((res) => {
-      if (res.status === 1032) {
-        const { groupData } = res.data
-        context.$store.commit('setGroupList', groupData)
-      }
-    })
+/**
+ * 请求：获取分组
+ * @param {Vue} context
+ * @returns
+ */
+export async function reqGetGroup (context) {
+  return new Promise((resolve, reject) => {
+    context.$request.get(apiGetGroup)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  })
 }
 
-export function updateGroupNameRequest ({ context, requestParams }) {
+export async function updateGroupNameRequest ({ context, requestParams }) {
   context.$request.post(apiUpdateGroupName, requestParams)
     .then(res => {
       if (res.status === 1033) {

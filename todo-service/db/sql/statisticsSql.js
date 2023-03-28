@@ -74,3 +74,17 @@ WHERE
 GROUP BY
 	tt.tag_id
 `
+
+// 获取以今天为准，最近七天专注时长（前3天后3天）
+module.exports.sqlSevenFocusTime = `
+SELECT 
+	DATE_FORMAT(create_time, '%Y-%m-%d') as day,
+	SUM(focus_time) as focusTime
+FROM todo_focus
+WHERE
+	user_id = ?
+	AND DATE(create_time) >= DATE_SUB(CURRENT_DATE, INTERVAL 3 day)
+	AND DATE(create_time) <= DATE_ADD(CURDATE(),INTERVAL 3 day)
+GROUP BY day
+ORDER BY day ASC
+`

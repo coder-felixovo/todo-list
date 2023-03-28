@@ -1,7 +1,6 @@
 const db = require('../db/config') // 数据库配置
 const { handleQueryResult, ServerResponseResult } = require('../util/result')
-const { getUserInfoSql } = require('../db/sql')
-const { updateNicknameSql, updateContactSql, updateEmailSql } = require('../db/userinfoSql') // sql语句
+const { updateNicknameSql, updateContactSql, updateEmailSql, getUserInfoSql } = require('../db/sql/accountSql') // sql语句
 
 /**
  * @description 获取用户信息

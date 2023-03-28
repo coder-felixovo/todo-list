@@ -26,6 +26,7 @@
             v-model="ipt_deadline"
             type="datetime"
             placeholder="选择日期时间"
+            clearable
           >
           </el-date-picker>
         </div>
@@ -38,6 +39,7 @@
             v-model="ipt_groupId"
             @visible-change="isShowTips = false"
             placeholder="请选择"
+            clearable
           >
             <el-option
               v-for="item in groupList"
@@ -56,6 +58,7 @@
           <el-select
             v-model="ipt_tagId"
             placeholder="请选择"
+            clearable
           >
             <el-option
               v-for="item in tagList"
@@ -74,6 +77,7 @@
           <el-select
             v-model="ipt_matrixId"
             placeholder="请选择"
+            clearable
           >
             <el-option
               v-for="item in matrixList"
@@ -105,10 +109,7 @@
 <script>
 import { apiEdit } from '@/assets/js/public/api'
 import { Todo } from '@/assets/js/public/class'
-import { createTodoRequest } from '@/assets/js/request/todoRequest.js'
-import {
-  handleCreateTodo, handleToggleTodoChecked
-} from '@/assets/js/views/matrix'
+import { reqCreateTodo } from '@/assets/js/request/todoRequest.js'
 export default {
   name: 'todo-popover-comp',
 
@@ -121,20 +122,27 @@ export default {
       ipt_groupId: '',
       ipt_tagId: '',
       ipt_matrixId: '',
+      ipt_groupName: '',
+      ipt_tagName: '',
+      ipt_todoChecked: 0,
       operatedTodoId: ''
     }
   },
 
   methods: {
-    setDataInCreated () {
-      // 在created从vuex中拿到要编辑的todo数据，在<input>显示
-      const { todoId, todoTitle, todoDeadline, groupId, tagId, matrixId } = this.$store.state.operatedTodo
+    init () {
+      // 如果是通过编辑打开AddTodoPopover.vue，则去state中拿到要编辑的事项
+      if (!this.$store.state.operatedTodo) return
+      const { todoId, todoTitle, todoDeadline, groupId, tagId, matrixId, groupName, tagName, todoChecked } = this.$store.state.operatedTodo
       this.operatedTodoId = todoId
       this.ipt_title = todoTitle
       this.ipt_deadline = new Date(todoDeadline)
       this.ipt_groupId = groupId
       this.ipt_tagId = tagId
       this.ipt_matrixId = matrixId
+      this.ipt_groupName = groupName
+      this.ipt_tagName = tagName
+      this.ipt_todoChecked = todoChecked
     },
     cancel () {
       this.visible = false
@@ -149,34 +157,39 @@ export default {
         todoId: this.operatedTodoId,
         todoTitle: this.ipt_title,
         todoDeadline: this.ipt_deadline,
-        groupId: this.ipt_groupId,
-        tagId: this.ipt_tagId,
-        matrixId: this.ipt_matrixId
+        groupId: this.ipt_groupId || null,
+        tagId: this.ipt_tagId || null,
+        matrixId: this.ipt_matrixId || null,
+        groupName: this.ipt_groupId ? this.ipt_groupName : null,
+        tagName: this.ipt_tagId ? this.ipt_tagName : null,
+        todoChecked: this.ipt_todoChecked
       })
       this.visible = false
-      this.$store.commit('toggleAddTodoPopover')
-      if (this.$store.state.addOrEditFlag === 'add') {
-        const result = await createTodoRequest({ context: this, requestParams })
-        handleCreateTodo({ context: this, todo: result })
+      if (this.$route.path.includes('matrix')) {
+        const result = await reqCreateTodo(this, requestParams)
+        if (result.status === 1001) {
+          const { todo: newTodo } = result.data
+          // Matrix.vue中接收
+          this.$bus.$emit('bus-todo-matrix', newTodo)
+        }
       } else {
         this.updateTodo(requestParams)
       }
+      this.$store.commit('toggleAddTodoPopover')
     },
     updateTodo (requestParams) {
       this.$request.post(apiEdit, requestParams)
         .then(res => {
           if (res.status === 1010) {
-            console.log(res)
+            // 发送至TodoList.vue
+            this.$bus.$emit('bus-edit-todo', res.data.update)
           }
         })
     }
   },
 
   created () {
-    this.setDataInCreated()
-    // if (this.$store.state.addOrEditFlag === 'edit') {
-    //   this.setDataInCreated()
-    // }
+    this.init()
   },
 
   computed: {

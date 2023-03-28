@@ -1,6 +1,5 @@
-const { response } = require('express')
 const db = require('../db/config')
-const { sqlGetTodoByDateRange } = require('../db/sql')
+const { sqlGetTodoByDateRange } = require('../db/sql/todoSql')
 const { ServerResponseResult, handleQueryResult, printSqlError } = require('../util/public')
 
 // 获取月视图待办事项
@@ -32,5 +31,28 @@ module.exports.getTodoMonthHandler = function (request, response) {
     }
   })
 }
-module.exports.getTodoInWeekViewHandler = function (req, res) { }
+
+/**
+ * 获取周视图待办事项
+ * @param {object} request 
+ * @param {object} response 
+ */
+module.exports.getTodoInWeekView = function (request, response) {
+  const { userid } = request.auth
+  const { begin, end } = request.query
+  const { responseResult } = request
+  responseResult.operation = '获取周视图待办事项'
+  const sqlParams = [userid, begin, end]
+  db.query(sqlGetTodoByDateRange, sqlParams, (error, results) => {
+    if (error) {
+      responseResult.status = -1
+      responseResult.message = '服务器跑路了'
+      response.send(responseResult)
+    }
+    responseResult.status = 502
+    responseResult.message = '成功'
+    responseResult.data.weekTodo = results
+    response.send(responseResult)
+  })
+}
 module.exports.getTodoInDayViewHandler = function (req, res) { }

@@ -1,7 +1,7 @@
 const {
   dbGetTotalTodoNums, dbGetTotalDoneTodoNums, dbGetAccountCreateTime,
   dbGetTodayDoneTodoNums, dbGetTodayFocusTime, dbGetSevenDoneTodoNums,
-  dbGetDoneTodoNumsOfTag
+  dbGetDoneTodoNumsOfTag, dbSevenFocusTime
 } = require('../db/operation/statDb')
 
 // 获取统计页面的总计数据 701
@@ -59,5 +59,28 @@ module.exports.getPieDoneTodoNumsOfTag = async function (request, response) {
   responseResult.data.data = p1
   responseResult.status = 704
   response.send(responseResult)
+}
+
+/**
+ * 请求处理：
+ * 获取最近七天专注时长
+ * @param {object} request 
+ * @param {object} response 
+ */
+module.exports.getSevenFocusTime = async function (request, response) {
+  const { userid } = request.auth
+  const { responseResult } = request
+  responseResult.operation = '查询最近七天专注时长'
+  responseResult.data.title = '最近七天专注时长'
+  const result = await dbSevenFocusTime(userid)
+  if (result instanceof Error) {
+    responseResult.status = -1
+    responseResult.message = '服务器跑路了'
+    response.send(responseResult)
+  } else {
+    responseResult.data.list = result
+    responseResult.status = 705
+    response.send(responseResult)
+  }
 }
 

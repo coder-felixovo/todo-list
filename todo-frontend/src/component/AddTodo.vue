@@ -45,7 +45,7 @@
 <script>
 import { showMessage } from '@/assets/js/public/publicFunction'
 import { Todo } from '@/assets/js/public/class'
-import { createTodoRequest } from '@/assets/js/request/todoRequest'
+import { reqCreateTodo } from '@/assets/js/request/todoRequest'
 
 export default {
   name: 'add-todo-comp',
@@ -63,24 +63,34 @@ export default {
   methods: {
     async addTodo () {
       if (!this.todoTitle) {
-        showMessage(this, '标题不能为空', 'info', 800)
+        showMessage(this, '标题不能为空', 'info', 700)
         return
       }
       const requestParams = new Todo({
         todoTitle: this.todoTitle,
         todoDeadline: this.todoDeadline,
         groupId: this.todoGroupId,
-        groupName: this.groupName
+        groupName: this.todoGroupName
       })
-      const newTodo = await createTodoRequest({ context: this, requestParams })
       // 清理
       this.todoTitle = ''
       this.todoDeadline = ''
       this.todoGroupId = ''
       this.todoGroupName = ''
       this.$refs.addTodoInputRef.blur()
-      // 更新视图，发送至TodoList.vue
-      this.$bus.$emit('bus-new-todo', newTodo)
+      // 请求结果
+      const result = await reqCreateTodo(this, requestParams)
+      if (result instanceof Error) {
+        console.error('创建新的事项失败')
+      } else {
+        if (result.status === 1001) {
+          const { todo: newTodo } = result.data
+          // 更新视图，发送至TodoList.vue
+          this.$bus.$emit('bus-new-todo', newTodo)
+        } else {
+          showMessage(this, '标题不能为空', 'info', 700)
+        }
+      }
     },
 
     openDatetimePicker () {
@@ -119,7 +129,6 @@ export default {
       const { groupId, groupName } = busData
       this.todoGroupId = groupId
       this.todoGroupName = groupName
-      // this.$store.commit('setAddTodoInGroup', busData)
     }
   },
 

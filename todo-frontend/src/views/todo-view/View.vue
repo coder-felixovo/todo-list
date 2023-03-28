@@ -4,7 +4,7 @@
     <div class="flex flex-col h-full">
       <div class="head flex">
         <el-menu
-          :default-active="activeIndex"
+          :default-active="$route.path"
           mode="horizontal"
           active-text-color="#409eff"
           router
@@ -30,18 +30,35 @@
             </div>
           </template>
           <template v-else-if="routePath === '/b/view/week'">
+            <i
+              class="el-icon-arrow-left"
+              @click="emitLastWeekEvent"
+            ></i>
+            <span class="date-text">{{weekDateRange.begin}} - {{weekDateRange.end}}</span>
+            <i
+              class="el-icon-arrow-right"
+              @click="emitNextWeekEvent"
+            ></i>
           </template>
           <template v-else-if="routePath === '/b/view/day'"></template>
           <template v-else></template>
         </div>
       </div>
-      <router-view></router-view>
+      <router-view :key="$route.path"></router-view>
     </div>
   </div>
 </template>
 
 <script>
-import { todoViewMenuData } from '@/views/todo-view/index.js'
+const routeMonth = '/b/view/month'
+const routeWeek = '/b/view/week'
+const routeDay = '/b/view/day'
+
+export const todoViewMenuData = [
+  { name: '月', route: routeMonth, key: 'month' },
+  { name: '周', route: routeWeek, key: 'week' }
+  // { name: '天', route: routeDay, key: 'day' }
+]
 
 export default {
   name: 'todo-view-comp',
@@ -49,7 +66,10 @@ export default {
   data () {
     return {
       todoViewMenu: todoViewMenuData,
-      activeIndex: '/b/view/month'
+      weekDateRange: {
+        begin: '',
+        end: ''
+      }
     }
   },
 
@@ -59,10 +79,18 @@ export default {
     },
     emitNextMonthEvent () {
       this.$bus.$emit('bus-update-calendar', 'nextMonth')
+    },
+    emitLastWeekEvent() {
+      this.$bus.$emit('bus-last-week')
+    },
+    emitNextWeekEvent () {
+      this.$bus.$emit('bus-next-week')
+    },
+    setDateRange (busData) {
+      const { begin, end } = busData
+      this.weekDateRange.begin = begin
+      this.weekDateRange.end = end
     }
-  },
-
-  created () {
   },
 
   computed: {
@@ -72,6 +100,11 @@ export default {
     calendarDate () {
       return this.$store.state.calendarDate
     }
+  },
+
+  mounted () {
+    // 来自Week.vue
+    this.$bus.$off('bus-date-range').$on('bus-date-range', this.setDateRange)
   }
 }
 </script>

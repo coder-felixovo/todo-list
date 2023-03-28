@@ -3,7 +3,7 @@
     <el-select
       v-model="selectedGroup"
       placeholder="请选择"
-      @change="selectOnChange"
+      @change="selectGroup"
     >
       <el-option
         v-for="item in groupList"
@@ -33,7 +33,7 @@ export default {
   },
 
   methods: {
-    selectOnChange () {
+    selectGroup () {
       this.$store.commit('toggleGroupPicker')
       // 发送至AddTodo.vue
       this.$bus.$emit('bus-select-group', this.selectedGroup)
@@ -41,7 +41,7 @@ export default {
   },
 
   created () {
-    this.groupList = this.$store.state.groupList
+    this.groupList = JSON.parse(localStorage.getItem('groupList'))
   }
 }
 </script>

@@ -106,9 +106,13 @@
               @click="openAddRecordDialog"
             ></i>
           </div>
-          <div class="record-list">
+          <div
+            class="record-list"
+            @contextmenu.prevent="openMenu"
+          >
             <div
               class="record-item"
+              :focus-id="item.focusId"
               v-for="item in focusRecordList"
               :key="item.focusId"
             >
@@ -195,14 +199,54 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 菜单 -->
+    <div
+      class="focus-menu"
+      ref="focusMenu"
+      v-show="isShowMenu"
+      @click="clickMenu"
+    >
+      <ul>
+        <li
+          class="menu-item"
+          tag="detail"
+        >查看详情</li>
+      </ul>
+    </div>
     <!-- 专注记录详情 -->
+    <div
+      class="focus-detail"
+      v-if="isShowDetail"
+    >
+      <div class="clearfix">
+        <span class="fl fs-22px">专注详情</span>
+        <i
+          class="el-icon-close fr"
+          @click="closeDetail"
+        ></i>
+      </div>
+      <div class="item"><span>事项标题：{{focusDetail.todoTitle}}</span></div>
+      <div class="item"><span>创建时间：{{focusDetail.createTime}}</span></div>
+      <div class="item"><span>开始时间：{{focusDetail.startTime}}</span></div>
+      <div class="item"><span>结束时间：{{focusDetail.endTime}}</span></div>
+      <div class="item"><span>专注时长：{{focusDetail.focusTime}}</span></div>
+      <div class="clearfix">
+        <el-button
+          class="fr"
+          type="text"
+          disabled
+        >删除</el-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { apiAddFocusRecord, apiGetTodoInFocus, apiGetFocusRecord, apiGetFocusStat } from '@/assets/js/api/api.js'
+import {
+  reqTodoCanFocus, reqAddFocusRecord, reqGetFocusRecord, reqFocusStat, reqFocusDetail
+} from '@/assets/js/request/timeRequest'
 import { showMessage } from '@/assets/js/public/publicFunction.js'
-import { TodoFocusRecord, convertTimeToText } from './index.js'
+import { TodoFocusRecord, convertTimeToText } from './time.js'
 export default {
   name: 'timer-view-comp',
   data () {
@@ -228,57 +272,26 @@ export default {
       r_startTime: null,
       r_endTime: null,
       r_note: '',
-      addRecordTips: '请选择开始时间和结束时间'
+      addRecordTips: '请选择开始时间和结束时间',
+      isShowMenu: false,
+      isShowDetail: false,
+      focusDetail: {
+        todoId: '',
+        focusId: '',
+        todoTitle: '',
+        createTime: '',
+        startTime: '',
+        endTime: '',
+        focusTime: ''
+      },
+      clickFocusId: null
     }
   },
 
   methods: {
-    /* axios请求 */
-    async requestFocusStat () {
-      return new Promise((resolve, reject) => {
-        this.$request.get(apiGetFocusStat)
-          .then((res) => {
-            resolve(res)
-          })
-          .catch((err) => {
-            reject(err)
-          })
-      })
-    },
-    async requestGetTodo () {
-      return new Promise((resolve, reject) => {
-        this.$request.get(apiGetTodoInFocus)
-          .then((res) => {
-            if (res.status === 5001) {
-              resolve(res)
-            }
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      })
-    },
-    async requestGetFocusRecord () {
-      return new Promise((resolve, reject) => {
-        this.$request.get(apiGetFocusRecord)
-          .then((value) => { resolve(value) })
-          .catch((reason) => { console.error(reason) })
-      })
-    },
-    async requestAddRecord (requestParam) {
-      return new Promise((resolve, reject) => {
-        this.$request.post(apiAddFocusRecord, requestParam)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(err => {
-            console.error(err)
-          })
-      })
-    },
-    /* 获取数据 */
     async getFocusStat () {
-      this.requestFocusStat()
+      // 获取专注数据统计
+      await reqFocusStat(this)
         .then((res) => {
           if (res.status === 5004) {
             const { todayFocusNums, todayFocusTime, totalFocusNums, totalFocusTime } = res.data
@@ -290,7 +303,7 @@ export default {
         })
     },
     async getTodo () {
-      await this.requestGetTodo()
+      await reqTodoCanFocus(this)
         .then(res => {
           if (res.status === 5001) {
             this.todoList = res.data.todoData
@@ -314,7 +327,7 @@ export default {
         endTime: this.r_endTime,
         note: this.r_note
       }
-      await this.requestAddRecord(requestParam)
+      await reqAddFocusRecord(this, requestParam)
         .then((res) => {
           if (res.status === 5002) {
             this.focusRecordList.unshift(new TodoFocusRecord(res.data))
@@ -322,10 +335,27 @@ export default {
         })
     },
     async getFocusRecord () {
-      await this.requestGetFocusRecord()
+      await reqGetFocusRecord(this)
         .then((res) => {
           if (res.status === 5003) {
             this.focusRecordList = res.data.focusRecordData
+          }
+        })
+    },
+    async getFocusDetail () {
+      const requestParams = { focusId: this.clickFocusId }
+      await reqFocusDetail(this, requestParams)
+        .then(res => {
+          if (res.status === 5005) {
+            const { focusId, todoId, createTime, startTime, endTime, focusTime, todoTitle } = res.data
+            this.focusDetail.focusId = focusId
+            this.focusDetail.todoId = todoId
+            this.focusDetail.todoTitle = todoTitle
+            this.focusDetail.createTime = createTime
+            this.focusDetail.startTime = startTime
+            this.focusDetail.endTime = endTime
+            this.focusDetail.focusTime = (focusTime / 60).toFixed(1) + 'min'
+            this.isShowDetail = true
           }
         })
     },
@@ -337,7 +367,6 @@ export default {
         if (this.leftSeconds === 0) {
           this.isStart = false
           this.isStop = false
-          this.f_todoId = ''
           this.countDownEnd()
           clearInterval(this.timer)
         }
@@ -345,7 +374,6 @@ export default {
     },
     countDownEnd () {
       // 倒计时结束
-      console.log(1)
       const todoTitle = this.todoList.find(element => this.f_todoId === element.todoId).todoTitle
       const requestParams = {
         todoId: this.f_todoId,
@@ -355,10 +383,15 @@ export default {
         focusTime: this.minutes * 60,
         note: this.r_note
       }
-      this.requestAddRecord(requestParams)
+      reqAddFocusRecord(this, requestParams)
         .then((res) => {
           if (res.status === 5002) {
             this.focusRecordList.unshift(new TodoFocusRecord(res.data))
+            this.f_todoId = ''
+            this.todayFocusNums += 1
+            this.totalFocusNums += 1
+            this.todayFocusTime += this.minutes * 60
+            this.totalFocusTime += this.minutes * 60
           }
         })
     },
@@ -416,10 +449,14 @@ export default {
             todoId: this.f_todoId,
             todoTitle
           }
-          await this.requestAddRecord(requestParams)
+          await reqAddFocusRecord(this, requestParams)
             .then(res => {
               if (res.status === 5002) {
                 this.focusRecordList.unshift(new TodoFocusRecord(res.data))
+                this.todayFocusNums += 1
+                this.todayFocusTime += focusTime
+                this.totalFocusNums += 1
+                this.totalFocusTime += focusTime
               }
             })
         })
@@ -453,6 +490,49 @@ export default {
 
     handleFocusTimeText (time) {
       return convertTimeToText(time)
+    },
+    openMenu () {
+      const focusId = event.composedPath().find(element => element._prevClass.includes('record-item')).attributes['focus-id'].value
+      this.clickFocusId = focusId
+      const clientX = event.clientX
+      const clientY = event.clientY
+      if (!this.isShowMenu) {
+        this.isShowMenu = true
+        window.addEventListener('click', this.closeMenu)
+      }
+      this.$nextTick(() => {
+        const menuDOM = this.$refs.focusMenu
+        menuDOM.style.left = clientX - 65 + 'px'
+        menuDOM.style.top = clientY + 'px'
+      })
+    },
+    closeMenu() {
+      const click = event.composedPath().find(element => {
+        if (element._prevClass) {
+          if (element._prevClass.includes('focus-menu')) {
+            return element
+          } else {
+            return undefined
+          }
+        } else {
+          return undefined
+        }
+      })
+      if (!click) {
+        this.isShowMenu = false
+      }
+      window.removeEventListener('click', this.closeMenu)
+    },
+    clickMenu() {
+      const menuItem = event.composedPath().find(element => element._prevClass.includes('menu-item'))
+      const { value: tag } = menuItem.attributes.tag
+      if (tag === 'detail') {
+        this.getFocusDetail()
+        this.isShowMenu = false
+      }
+    },
+    closeDetail () {
+      this.isShowDetail = false
     }
   },
 
@@ -522,5 +602,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url("./index.less");
+@import url("./time.less");
 </style>

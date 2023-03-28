@@ -2,9 +2,6 @@ export default {
   setToken (state, value) {
     state.token = value
   },
-  setTempVueContext (state, value) {
-    state.tempVueContext = value
-  },
 
   // 设置菜单、对话框、弹出框等的显示与隐藏
   toggleAddGroupDialog (state, value) {
@@ -37,9 +34,8 @@ export default {
   toggleSearchDialog (state, value) {
     state.isShowSearchDialog = !state.isShowSearchDialog
   },
-
-  setTodoPopoverMode (state, value) {
-    state.addOrEditFlag = value
+  toggleTextEditor (state, value) {
+    state.isShowTextEditor = !state.isShowTextEditor
   },
   setGroupList (state, value) {
     state.groupList = value || []
@@ -76,10 +72,6 @@ export default {
     state.calendarDate.date = year + '-' + (month + 1)
     state.calendarDate.year = year
     state.calendarDate.month = month
-  },
-  setAddTodoInGroup (state, value) {
-    state.addTodoInGroup.groupId = value.id
-    state.addTodoInGroup.groupName = value.name
   },
 
   // 操作待办事项

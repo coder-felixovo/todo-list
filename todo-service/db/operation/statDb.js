@@ -2,7 +2,7 @@ const db = require('../config')
 const {
 	sqlGetTotalTodoNums, sqlGetTotalDoneTodoNums, sqlGetAccountCreateTime,
 	sqlGetTodayDoneTodoNums, sqlGetTodayFocusTime,
-	sqlGetSevenDoneTodoNums, sqlGetDoneTodoNumsOfTag
+	sqlGetSevenDoneTodoNums, sqlGetDoneTodoNumsOfTag, sqlSevenFocusTime
 } = require('../sql/statisticsSql')
 
 // 获取总任务数量
@@ -65,6 +65,19 @@ module.exports.dbGetSevenDoneTodoNums = async function (userid) {
 module.exports.dbGetDoneTodoNumsOfTag = async function (userid) {
 	return new Promise((resolve, reject) => {
 		db.query(sqlGetDoneTodoNumsOfTag, userid, (error, results) => {
+			error ? reject(error) : resolve(results)
+		})
+	})
+}
+
+/**
+ * 数据库操作：
+ * 获取以今天为准，最近七天专注时长（前3天后3天）
+ * @param {string} userid 
+ */
+module.exports.dbSevenFocusTime = async function (userid) {
+	return new Promise((resolve, reject) => {
+		db.query(sqlSevenFocusTime, userid, (error, results) => {
 			error ? reject(error) : resolve(results)
 		})
 	})

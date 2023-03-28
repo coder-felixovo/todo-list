@@ -58,3 +58,22 @@ FROM
 WHERE
 	user_id = ?
 `
+
+// Sql：获取专注详情
+module.exports.sqlFocusDetail = `
+SELECT
+	f.focus_id as focusId,
+	f.todo_id as todoId,
+	f.create_time as createTime,
+	f.start_time as startTime,
+	f.end_time as endTime,
+	f.focus_time as focusTime,
+	t.todo_title as todoTitle
+FROM
+	todo_focus as f
+LEFT JOIN todo as t
+ON f.todo_id = t.todo_id
+WHERE
+	f.user_id = ?
+	AND f.focus_id = ?
+`

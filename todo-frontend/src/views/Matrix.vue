@@ -36,24 +36,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="matrix1 flex flex-col h-full rounded-8px bg-white">
-          <div class="head flex flex-none justify-between items-center">
-            <div class="overflow-hidden flex flex-auto items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-1-circle color-error"
-                viewBox="0 0 16 16"
-              >
-                <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8Zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM9.283 4.002V12H7.971V5.338h-.065L6.072 6.656V5.385l1.899-1.383h1.312Z" />
-              </svg>
-              <h3 class="ml-10px color-error fs-13px fw-500">{{matrixList[0].matrixName}}</h3>
-            </div>
-          </div>
-        </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -84,9 +66,7 @@ export default {
 
   methods: {
     openAddTodoPopover () {
-      this.$store.commit('setTodoPopoverMode', 'add')
       this.$store.commit('toggleAddTodoPopover')
-      this.$store.commit('setTempVueContext', this)
     },
     async checkTodo () {
       const clickDOM = event.composedPath().find(element => element.__vue__)
@@ -116,6 +96,10 @@ export default {
             this.matrixTodoList = matrixTodoData || []
           }
         })
+    },
+    unshitTodo(busData) {
+      console.log(busData)
+      if (busData) this.matrixTodoList.unshift(busData)
     }
   },
 
@@ -123,6 +107,9 @@ export default {
     const matrixList = this.$store.state.matrixList
     this.matrixList = matrixList || defaultMatrixData
     this.getMatrixTodo()
+  },
+  mounted () {
+    this.$bus.$off('bus-todo-matrix').$on('bus-todo-matrix', this.unshitTodo)
   },
 
   computed: {

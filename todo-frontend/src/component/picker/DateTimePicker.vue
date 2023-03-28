@@ -1,5 +1,8 @@
 <template>
-  <div class="datetime-picker" @click.stop>
+  <div
+    class="datetime-picker"
+    @click.stop
+  >
     <el-date-picker
       v-model="datetime"
       type="datetime"
@@ -18,7 +21,7 @@ export default {
 
   data () {
     return {
-      datetime: null
+      datetime: new Date()
     }
   },
 

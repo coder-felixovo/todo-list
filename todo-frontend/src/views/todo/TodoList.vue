@@ -88,7 +88,7 @@
           <div
             class="inner-scroll"
             ref="uncheckedScrollRef"
-            :class="{'overflow-auto': isShowUncheckedScroll}"
+            :class="{'overflow-auto': isShowUncheckedScroll, 'overflow-hidden': !isShowUncheckedScroll}"
             @mouseenter="uncheckedMouseEnter"
             @mouseleave="uncheckedMouseLeave"
             @scroll="uncheckedOnScroll"
@@ -149,7 +149,7 @@
           </template>
           <div
             class="inner-scroll"
-            :class="{'overflow-auto': isShowCheckedScroll}"
+            :class="{'overflow-auto': isShowCheckedScroll, 'overflow-hidden': !isShowCheckedScroll}"
             @mouseenter="isShowCheckedScroll = true"
             @mouseleave="isShowCheckedScroll = false"
           >
@@ -183,7 +183,7 @@
 import { toggleTodoCheckedRequest } from '@/assets/js/request/todoRequest'
 import {
   dispatchGetTodo
-} from '@/assets/js/views/todoList.js'
+} from './todoList.js'
 import AddTodo from '@/component/AddTodo.vue'
 import TodoItem from '@/component/TodoItem.vue'
 import { showMessage } from '@/assets/js/public/publicFunction'
@@ -224,8 +224,8 @@ export default {
       if (operatedTodo) {
         this.$store.commit('setOperatedTodo', operatedTodo)
         if (isClickSquare) {
-          // 如果当前路由是在回收站，就不执行
           if (this.$route.path.includes('trash')) {
+            // 如果当前路由是在回收站，就不执行
             showMessage(this, '不能更换回收站中的待办事项的状态', 'info', 700)
             return
           }
@@ -252,10 +252,10 @@ export default {
               this.uncheckedTodoList.unshift(updatedTodo)
             }
           }
-          return
+        } else {
+          // 发送至Todo.vue
+          this.$bus.$emit('bus-open-texteditor')
         }
-        // 发送至Todo.vue
-        this.$bus.$emit('bus-open-texteditor')
       }
     },
 
@@ -381,6 +381,20 @@ export default {
     uncheckedMouseLeave () {
       this.isShowUncheckedScroll = false
       this.$refs.uncheckedScrollRef.scrollTop = this.uncheckedScrollTop
+    },
+    // 更新编辑的数据
+    editTodo (busData) {
+      const { todoId, todoChecked, todoTitle, groupId, groupName, tagId, tagName, todoDeadline } = busData
+      console.log(busData)
+      const list = todoChecked === 0 ? this.uncheckedTodoList : this.checkedTodoList
+      const index = list.findIndex(element => element.todoId === todoId)
+      console.log(list[index])
+      list[index].todoTitle = todoTitle
+      list[index].groupId = groupId
+      list[index].groupName = groupName
+      list[index].tagId = tagId
+      list[index].tagName = tagName
+      list[index].todoDeadline = todoDeadline
     }
   },
 
@@ -399,6 +413,8 @@ export default {
     this.$bus.$off('bus-regain-todo').$on('bus-regain-todo', this.regainTodo)
     // 来自TextEditor.vue
     this.$bus.$off('bus-update-todo-title').$on('bus-update-todo-title', this.updateTodoTitle)
+    // 来自AddTodoPopover.vue
+    this.$bus.$off('bus-edit-todo').$on('bus-edit-todo', this.editTodo)
   },
 
   computed: {

@@ -18,7 +18,8 @@ module.exports = {
     'vue/no-use-v-if-with-v-for': 'off',
     camelcase: 'off',
     'space-before-function-paren': 0,
-    'prefer-const': 0
+    'prefer-const': 0,
+    'node/handle-callback-err': 0
   },
   overrides: [
     {

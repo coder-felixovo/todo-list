@@ -1,6 +1,5 @@
 <template>
   <div class="group-menu">
-    <h1 class="mb-10px fs-20px color-primary fw-500">分组菜单</h1>
     <el-popover
       placement="right"
       trigger="manual"

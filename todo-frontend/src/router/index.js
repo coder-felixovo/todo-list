@@ -47,7 +47,7 @@ const routes = [
       {
         path: '/time',
         name: 'time',
-        component: () => import('@/views/time/index.vue')
+        component: () => import('@/views/time/Time.vue')
       }
     ]
   },

@@ -1,6 +1,5 @@
 <template>
   <div class="tag-menu pt-10px pb-10px pl-10px pr-10px">
-    <h1 class="mb-10px fs-20px color-grey fw-500">标签菜单</h1>
     <el-popover
       placement="right"
       trigger="manual"

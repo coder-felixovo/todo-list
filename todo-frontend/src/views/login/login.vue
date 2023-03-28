@@ -5,7 +5,7 @@
         <h2 class="mb-30px">登录</h2>
         <div class="mb-10px">
           <el-input
-            placeholder="请输入帐号"
+            placeholder="请输入用户名"
             ref="username-input"
             prefix-icon="el-icon-user"
             v-model="username"

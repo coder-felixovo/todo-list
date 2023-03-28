@@ -7,8 +7,11 @@ const { generateDatetime, formatDateObject } = require('../util/time')
 const { Todo } = require('../model/todo')
 
 const {
+  dbGetAllTodo
+} = require('../db/operation/todoDb')
+const {
   sqlAddTodo, sqlCreateTodo, sqlMoveTodoInBin, sqlDeleteTodo, sqlToggleTodoCompletionStatus, sqlRegainTodo,
-  sqlSaveTodoDetail, sqlGetTodoDetail, sqlUpdateTodoTitle, sqlGetAllTodo, sqlGetCollectTodo,
+  sqlSaveTodoDetail, sqlGetTodoDetail, sqlUpdateTodoTitle, sqlGetCollectTodo,
   sqlGetCompletedTodo, sqlGetBinTodo, sqlGetTodoByDate, sqlGetGroupTodo, sqlDeleteAllTodo,
   sqlEdit, sqlGetTagTodo
 } = require('../db/sql/todoSql.js')
@@ -235,7 +238,6 @@ module.exports.updateTodoTitleHandler = function (request, response) {
       responseResult.message = '服务器内部出现错误'
       response.send(results)
     }
-    console.log(results)
     if (results.affectedRows === 1) {
       responseResult.status = 1008
       responseResult.message = '修改成功'
@@ -272,10 +274,14 @@ module.exports.deleteAllTodoHandler = function (request, response) {
   })
 }
 
-// 编辑 1010
+/**
+ * 编辑 1010
+ * @param {object} request 
+ * @param {object} response 
+ */
 module.exports.edit = function (request, response) {
   const { userid } = request.auth
-  const { todoId, todoTitle, groupId, tagId, matrixId } = request.body
+  const { todoId, todoTitle, todoChecked, groupId, tagId, matrixId, groupName, tagName } = request.body
   const { responseResult } = request
   let { todoDeadline } = request.body
   todoDeadline = todoDeadline ? formatDateObject(new Date(todoDeadline)) : null
@@ -283,7 +289,6 @@ module.exports.edit = function (request, response) {
   const sqlParams = [todoTitle, todoDeadline, groupId, tagId, matrixId, userid, todoId]
   db.query(sqlEdit, sqlParams, (error, results) => {
     if (error) {
-      printSqlError('edit', error)
       responseResult.status = -1
       responseResult.message = '服务器内部出现错误'
       return response.send(responseResult)
@@ -291,6 +296,17 @@ module.exports.edit = function (request, response) {
     if (results.affectedRows === 1) {
       responseResult.status = 1010
       responseResult.message = '更新成功'
+      responseResult.data.update = {
+        todoId,
+        todoTitle,
+        todoChecked,
+        todoDeadline,
+        groupId,
+        groupName,
+        tagId,
+        tagName,
+        matrixId
+      }
       return response.send(responseResult)
     } else {
       responseResult.status = -1010
@@ -300,19 +316,25 @@ module.exports.edit = function (request, response) {
   })
 }
 
-// 创建新的待办事项
-module.exports.createTodoHandler = function (request, response) {
+/**
+ * 创建新的待办事项 1001
+ * @param {object} request 
+ * @param {object} response 
+ */
+module.exports.createTodo = function (request, response) {
+  // 获取数据
   const { userid } = request.auth
+  const { responseResult } = request
   const { todoTitle, groupId, tagId, matrixId, groupName, matrixName, priority, tagName } = request.body
   let { todoDeadline } = request.body
-  todoDeadline = todoDeadline ? formatDateObject(new Date(request.body.todoDeadline)) : null
-  const { responseResult } = request
+  // 处理数据
+  todoDeadline = todoDeadline ? formatDateObject(new Date(todoDeadline)) : null
   const todoId = uuid().split('-').join('').slice(0, 15)
   const createTime = generateDatetime()
+  // 操作数据库
   const sqlParams = [userid, todoId, todoTitle, 0, 1, todoDeadline, groupId, matrixId, tagId, createTime]
   db.query(sqlCreateTodo, sqlParams, (error, results) => {
     if (error) {
-      printSqlError('createTodoHandler', error)
       responseResult.status = -1
       responseResult.message = '服务器跑路了'
       return response.send(responseResult)
@@ -347,36 +369,21 @@ module.exports.createTodoHandler = function (request, response) {
 }
 
 // 获取全部待办事项 1021
-module.exports.getAllTodoHandler = function (request, response) {
+module.exports.getAllTodoHandler = async function (request, response) {
   const { userid } = request.auth
   const { responseResult } = request
   responseResult.operation = '获取全部待办事项数据'
-  db.query(sqlGetAllTodo, [userid], (error, results) => {
-    if (error) {
-      printSqlError('getAllTodoHandler', error)
+  await dbGetAllTodo(userid)
+    .then(res => {
+      responseResult.status = 1021
+      responseResult.data.todoData = res
+      response.send(responseResult)
+    })
+    .catch(err => {
       responseResult.status = -1
       responseResult.message = '服务器跑路了'
-      return response.send(responseResult)
-    }
-    responseResult.status = 1021
-    responseResult.data = {
-      uncheckedTodoData: [],
-      checkedTodoData: []
-    }
-    const queryResult = handleQueryResult(results)
-    if (queryResult.length === 0) {
-      responseResult.message = '查询成功，但您未添加任何待办事项'
-      return response.send(responseResult)
-    }
-    queryResult.forEach(element => {
-      if (element.todoChecked === 0) {
-        responseResult.data.uncheckedTodoData.push(element)
-      } else {
-        responseResult.data.checkedTodoData.push(element)
-      }
+      response.send(responseResult)
     })
-    return response.send(responseResult)
-  })
 }
 
 // 获取收集箱待办事项 1022

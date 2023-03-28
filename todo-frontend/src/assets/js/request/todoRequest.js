@@ -1,33 +1,34 @@
 import {
-  apiToggleTodoChecked, apiCreateTodo, apiMoveBin, apiDeleteTodo, apiRegainTodo
-} from '@/assets/js/api/todoAPI'
+  apiCreateTodo, apiToggleTodoChecked, apiMoveBin, apiDeleteTodo, apiRegainTodo
+} from '../api/api'
 import { showMessage } from '../public/publicFunction'
 
-// 切换事项完成状态
+// 请求：切换事项完成状态
 export function toggleTodoCheckedRequest ({ context, requestParams }) {
   return new Promise((resolve, reject) => {
     context.$request.post(apiToggleTodoChecked, requestParams)
       .then(res => {
         if (res.status === 1004) {
           resolve(res.data)
-        } else {
-          console.error('切换待办事项状态失败')
         }
+      })
+      .catch(err => {
+        showMessage(context, '请求出现错误', 'info', 800)
       })
   })
 }
 
-// 请求：创建新的待办事项
-export function createTodoRequest ({ context, requestParams }) {
+/**
+ * 请求：创建新的事项
+ * @param {Vue} context
+ * @param {object} requestParams
+ * @returns
+ */
+export function reqCreateTodo (context, requestParams) {
   return new Promise((resolve, reject) => {
     context.$request.post(apiCreateTodo, requestParams)
-      .then(res => {
-        if (res.status === 1001) {
-          resolve(res.data.todo)
-        } else if (res.status === -1001) {
-          showMessage(context, '标题不能为空', 'info', 800)
-        }
-      })
+      .then(res => resolve(res))
+      .catch(err => reject(err))
   })
 }
 

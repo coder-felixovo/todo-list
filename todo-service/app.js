@@ -10,7 +10,7 @@ const searchRouter = require('./router/searchRouter')
 const statisticsRouter = require('./router/statisticsRouter')
 const tagRouter = require('./router/tagRouter')
 const todoRouter = require('./router/todoRouter')
-const todoViewRouter = require('./router/todoView')
+const todoViewRouter = require('./router/todoViewRouter')
 const userinfoRouter = require('./router/userinfo')
 
 const { jwtSecret } = require('./handler/secret')

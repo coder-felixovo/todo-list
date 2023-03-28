@@ -11,15 +11,27 @@ export function formatDateObject (dateObj) {
   }
 }
 
-export const dayNameInWeek = [
-  { id: 'Mon', name: '星期一' },
-  { id: 'Tue', name: '星期二' },
-  { id: 'Wed', name: '星期三' },
-  { id: 'Thu', name: '星期四' },
-  { id: 'Fri', name: '星期五' },
-  { id: 'Sat', name: '星期六' },
-  { id: 'Sun', name: '星期天' }
-]
+// 从日期对象获取2023-02-15的日期格式
+export function formatDate (dateObj) {
+  if (dateObj && dateObj instanceof Date) {
+    const year = dateObj.getFullYear()
+    let month = dateObj.getMonth() + 1
+    let date = dateObj.getDate()
+    month = month < 10 ? '0' + month : month
+    date = date < 10 ? '0' + date : date
+    return year + '-' + month + '-' + date
+  }
+}
+
+// export const dayNameInWeek = [
+//   { id: 'Mon', name: '星期一' },
+//   { id: 'Tue', name: '星期二' },
+//   { id: 'Wed', name: '星期三' },
+//   { id: 'Thu', name: '星期四' },
+//   { id: 'Fri', name: '星期五' },
+//   { id: 'Sat', name: '星期六' },
+//   { id: 'Sun', name: '星期天' }
+// ]
 
 export function getDaysInEveryMonthArray () {
   return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

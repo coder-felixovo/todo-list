@@ -3,7 +3,7 @@
   <div
     class="todo-item overflow-hidden flex color-primary "
     :class="{'opacity-40': isChecked}"
-    style="width: 90%; height: 40px;"
+    style="height: 40px;"
   >
     <div class="flex-1 flex items-center">
       <!-- 小方框图标 -->
@@ -49,7 +49,7 @@
         style="width: 100px;"
       >
         <div
-          class="flex items-center color-info"
+          class="flex items-center color-info pl-10px"
           v-if="todo.groupName"
         >
           <i class="el-icon-folder"></i>

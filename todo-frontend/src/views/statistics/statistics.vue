@@ -72,6 +72,14 @@
                 style="width: 850px; height:400px;"
               ></div>
             </div>
+            <!-- 柱状图：专注时间统计 -->
+            <div class="his-box pl-20px pr-20px mt-20px">
+              <h2 class="fs-22px fw-500 pt-10px">专注</h2>
+              <div
+                id="histogram"
+                style="width: 850px; height: 400px;"
+              ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -81,7 +89,7 @@
 
 <script>
 import * as echarts from 'echarts/core'
-import { LineChart, PieChart } from 'echarts/charts'
+import { LineChart, PieChart, BarChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -95,8 +103,12 @@ import { LabelLayout, UniversalTransition } from 'echarts/features'
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from 'echarts/renderers'
 
-import { apiGetTotalStat, apiGetTodayStat, apiGetLineSevenStat, apiTagDoneNums } from '@/assets/js/api/statisticsAPI.js'
-import { createLineChartOption, createLatestSevenArray, createPieChartOption } from './statistics.js'
+import {
+  apiGetTotalStat, apiGetTodayStat, apiGetLineSevenStat, apiTagDoneNums, apiSevenFocusTime
+} from '@/assets/js/api/api.js'
+import {
+  createLineChartOption, createLatestSevenArray, createPieChartOption, createHistogramOption
+} from './statistics.js'
 
 echarts.use([
   TitleComponent,
@@ -109,7 +121,8 @@ echarts.use([
   UniversalTransition,
   CanvasRenderer,
   LegendComponent,
-  PieChart
+  PieChart,
+  BarChart
 ])
 export default {
   name: 'statistics-view-comp',
@@ -126,7 +139,8 @@ export default {
       todayFocusHours: '0',
       todayFocusMinute: '0',
       lineChartOption: null,
-      pieChartOption: null
+      pieChartOption: null,
+      histogramOption: null
     }
   },
 
@@ -198,13 +212,13 @@ export default {
               dataList.forEach((element) => {
                 latestSevenList.forEach((item, index) => {
                   if (element.date === item.date) {
-                    latestSevenList[index].number = element.number
+                    latestSevenList[index].value = element.number
                   }
                 })
               })
               latestSevenList.forEach(element => {
                 option.xAxis.data.push(element.date)
-                option.series[0].data.push(element.number)
+                option.series[0].data.push(element.value)
               })
               this.lineChartOption = option
               this.$nextTick(() => {
@@ -224,7 +238,7 @@ export default {
             const pieOption = createPieChartOption()
             pieOption.title.text = title
             data.forEach(element => {
-              pieOption.series[0].data.push({ name: element.tagName, value: element.doneTodoNums })
+              pieOption.series[0].data.push({ name: element.tagName || '无类别', value: element.doneTodoNums })
             })
             this.pieChartOption = pieOption
             this.$nextTick(() => {
@@ -233,15 +247,46 @@ export default {
             })
           }
         })
+    },
+
+    async reqSevenFocusTime () {
+      this.$request.get(apiSevenFocusTime)
+        .then(res => {
+          if (res.status === 705) {
+            console.log(res)
+            const { title, list } = res.data
+            const hisOption = createHistogramOption()
+            const latestSevenList = createLatestSevenArray()
+            hisOption.xAxis.data = []
+            hisOption.series[0].data = []
+            hisOption.title.text = title
+            list.forEach(element => {
+              latestSevenList.forEach((item, index) => {
+                if (element.day === item.date) {
+                  latestSevenList[index].value = (element.focusTime / 60).toFixed(1)
+                }
+              })
+            })
+            latestSevenList.forEach(element => {
+              hisOption.xAxis.data.push(element.date)
+              hisOption.series[0].data.push(element.value)
+            })
+            this.histogramOption = hisOption
+            this.$nextTick(() => {
+              const myLineChart = echarts.init(document.getElementById('histogram'))
+              myLineChart.setOption(this.histogramOption)
+            })
+          }
+        })
     }
   },
 
   created () {
-    this.pieChartOption = createPieChartOption()
     this.reqGetTotalStat()
     this.reqGetTodayStat()
     this.reqGetLatestSevenDays()
     this.reqTagDoneNums()
+    this.reqSevenFocusTime()
   },
 
   mounted () {

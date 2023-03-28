@@ -11,7 +11,7 @@
     </div>
     <div class="day-of-month">
       <div
-        class="cell"
+        class="cell overflow-hidden"
         v-for="item in days"
         :key="item.id"
         :date="item.date"
@@ -32,8 +32,7 @@
 
 <script>
 import { dayNameInWeek, updateCalendar } from '@/assets/js/public/timeUtils.js'
-import { getMonthTodoReuest } from '@/views/todo-view/index.js'
-import { apiToggleTodoChecked } from '@/assets/js/api/api'
+import { apiToggleTodoChecked, apiGetMonthTodo } from '@/assets/js/api/api'
 import TodoItem from '@/component/TodoItem'
 import { showMessage } from '@/assets/js/public/publicFunction'
 export default {
@@ -74,7 +73,7 @@ export default {
         beginDate: this.days[0].date,
         endDate: this.days[this.days.length - 1].date
       }
-      getMonthTodoReuest({ context: this, requestParams })
+      this.getMonthTodoRequest(requestParams)
     },
 
     nextMonth () {
@@ -91,7 +90,7 @@ export default {
         beginDate: this.days[0].date,
         endDate: this.days[this.days.length - 1].date
       }
-      getMonthTodoReuest({ context: this, requestParams })
+      this.getMonthTodoRequest({ context: this, requestParams })
     },
 
     async reqToggleTodoChecked (reqParam) {
@@ -110,19 +109,28 @@ export default {
       })
     },
 
+    async getMonthTodoRequest (requestParams) {
+      this.$request.get(apiGetMonthTodo, requestParams)
+        .then(res => {
+          if (res.status === 501) {
+            this.todoList = res.data.monthViewData
+          }
+        })
+    },
+
     async clickEvent() {
       const clickDOM = event.composedPath()[0]
       if (!clickDOM) return
       if (clickDOM._prevClass.includes('bi-square')) {
         // 完成待办事项
-        const { todoId, todoChecked } = event.composedPath().find(element => element._prevClass.includes('todo-item')).__vue__.todo
+        const todo = event.composedPath().find(element => element._prevClass.includes('todo-item')).__vue__.todo
+        console.log(todo)
         const reqParam = {
-          todoId,
-          originalChecked: todoChecked,
-          targetChecked: todoChecked === 0 ? 1 : 0
+          todoId: todo.todoId,
+          originalChecked: todo.todoChecked,
+          targetChecked: todo.todoChecked === 0 ? 1 : 0
         }
-        const result = await this.reqToggleTodoChecked(reqParam)
-        const { _todoId } = result
+        const { todoId: _todoId } = await this.reqToggleTodoChecked(reqParam)
         const index = this.todoList.findIndex(element => element.todoId === _todoId)
         this.todoList.splice(index, 1)
       }
@@ -140,7 +148,7 @@ export default {
       beginDate: this.days[0].date,
       endDate: this.days[this.days.length - 1].date
     }
-    getMonthTodoReuest({ context: this, requestParams })
+    this.getMonthTodoRequest(requestParams)
   },
 
   mounted () {
